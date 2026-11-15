@@ -1,0 +1,22 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "gpt-salad",
+  "version": "0.1.0",
+  "description": "Translate text in ChatGPT or Codex conversations and keep a user-owned local vocabulary collection.",
+  "extensions": {
+    "com.openai": {
+      "requires_local_executor": true,
+      "onboardingSkill": "./skills/gpt-salad/SKILL.md",
+      "interface": {
+        "displayName": "GPT Salad",
+        "shortDescription": "会话内翻译与本地生词本",
+        "developerName": "Personal",
+        "category": "Productivity",
+        "capabilities": ["Read", "Write"]
+        ,"brandColor": "#29A889"
+        ,"composerIcon": "./assets/icon.png"
+        ,"logo": "./assets/logo.png"
+      }
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "gpt-daddy",
+  "version": "0.1.0",
+  "description": "Manage the existing local GPTDaddy wallpaper companion for Codex.",
+  "extensions": {
+    "com.openai": {
+      "requires_local_executor": true,
+      "onboardingSkill": "./skills/gpt-daddy/SKILL.md",
+      "interface": {
+        "displayName": "GPT Daddy",
+        "shortDescription": "管理 Codex 桌面壁纸与伴随服务",
+        "developerName": "Personal",
+        "category": "Productivity",
+        "capabilities": ["Read", "Write"],
+        "brandColor": "#5645A8",
+        "composerIcon": "./assets/icon.png",
+        "logo": "./assets/logo.png"
+      }
+    }
+  }
+}
