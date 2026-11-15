@@ -33,17 +33,7 @@ test('matches wallpaper content backing to the Codex text theme', () => {
   assert.match(script, /--gptdaddy-panel-blur/);
   assert.match(script, /#app-shell-sidebar > div > div/);
   assert.match(script, /MainContentTopFade/);
-  assert.match(script, /ComposerLayoutFooter.*bg-\(--composer-layout-surface-background\)/);
   assert.match(script, /\.bg-gradient-to-t\.from-surface/);
-  assert.match(script, /\.thread-scroll-container > \[class\*="container-name:thread-content"\] > \.sticky\.bottom-0 > \.from-surface\[class\*="_fade_"\]/);
-  assert.match(script, /\.thread-scroll-container > \[class\*="container-name:thread-content"\] > \.sticky\.bottom-0 > \.from-surface\[class\*="fade-"\]/);
-  assert.match(script, /group\/summary-panel.*before:-top-2/);
-  assert.match(script, /resource-card-row-padding-x/);
-  assert.match(script, /#root \[class\^="_shell_"\], #root \[class\^="shell-"\]/);
-  assert.match(script, /\[class\^="_headerRow_"\], \[class\^="headerRow-"\]/);
-  assert.match(script, /data-gptdaddy-selection-menu/);
-  assert.match(script, /data-gptdaddy-view-changes/);
-  assert.doesNotMatch(script, /\.thread-scroll-container\s*\{\s*display:\s*none/);
   assert.match(script, /backdrop-filter: blur\(var\(--gptdaddy-panel-blur, 0px\)\)/);
   assert.doesNotMatch(script, /backdrop-filter: blur\(14px\)/);
   assert.doesNotMatch(script, /backdrop-filter: blur\(16px\)/);

@@ -2,7 +2,7 @@ import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from '
 import { dirname, join } from 'node:path';
 import { Worker } from 'node:worker_threads';
 
-export const CATALOG_SCHEMA = 1;
+export const CATALOG_SCHEMA = 2;
 
 export function readCatalogCache(file) {
   try {

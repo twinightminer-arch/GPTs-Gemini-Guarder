@@ -1,7 +1,9 @@
-import { readFileSync, statSync } from 'node:fs';
-import { extname, join } from 'node:path';
+import { readFileSync, statSync, existsSync } from 'node:fs';
+import { extname, join, dirname, resolve } from 'node:path';
 import { PassThrough } from 'node:stream';
 import { randomUUID } from 'node:crypto';
+import { execFile, spawn } from 'node:child_process';
+import { promisify } from 'node:util';
 import manifest from '../package.json' with { type: 'json' };
 import { DEFAULT_DATA_ROOT, ensureState, writeState } from './core/config.mjs';
 import { detectCodexWindowsAsync } from './codex/windows-discovery.mjs';
@@ -10,9 +12,11 @@ import { catalogCacheFile, readCatalogCache, scanCatalogInWorker, writeCatalogCa
 import { LocalWallpaperStore } from './wallpaper/local-imports.mjs';
 import { WallpaperLifecycleManager } from './wallpaper/lifecycle-manager.mjs';
 import { createControlServer } from './server/control-server.mjs';
+import { VocabularyStore } from './vocabulary/store.mjs';
 
-const ALLOWED_SETTINGS = new Set(['opacity', 'scrimOpacity', 'blurPx', 'fit', 'zoom', 'positionX', 'positionY', 'muted', 'fontColor', 'composerBackgroundColor']);
+const ALLOWED_SETTINGS = new Set(['opacity', 'scrimOpacity', 'blurPx', 'fit', 'zoom', 'positionX', 'positionY', 'muted', 'volume', 'fontColor', 'composerBackgroundColor']);
 const APP_VERSION = manifest.version;
+const execFileAsync = promisify(execFile);
 
 export function normalizeSettings(input = {}) {
   const output = {};
@@ -25,6 +29,7 @@ export function normalizeSettings(input = {}) {
   if ('positionY' in output) output.positionY = Math.max(0, Math.min(100, Number(output.positionY)));
   if ('fit' in output && !['cover', 'contain', 'fill'].includes(output.fit)) delete output.fit;
   if ('muted' in output) output.muted = Boolean(output.muted);
+  if ('volume' in output) output.volume = Math.max(0, Math.min(1, Number(output.volume)));
   if ('fontColor' in output) {
     if (output.fontColor === null || output.fontColor === '') output.fontColor = null;
     else if (typeof output.fontColor !== 'string' || !/^#[0-9a-fA-F]{6}$/.test(output.fontColor)) throw new Error('Font color must be a six-digit hex color or automatic');
@@ -47,6 +52,7 @@ export class GPTDaddyDaemon {
     this.logger = logger;
     this.catalogFile = catalogCacheFile(dataRoot);
     this.localStore = new LocalWallpaperStore(dataRoot, { logger });
+    this.vocabulary = new VocabularyStore();
     this.workshopWallpapers = wallpapers || readCatalogCache(this.catalogFile);
     this.wallpapers = [...this.workshopWallpapers, ...this.localStore.list()];
     this.catalogIsFixed = wallpapers !== null;
@@ -90,13 +96,21 @@ export class GPTDaddyDaemon {
   async handleDesktopAction(action, payload = {}) {
     switch (action) {
       case 'status': return this.status();
-      case 'list': return this.wallpapers.map(({ projectRoot, filePath, previewPath, playablePath, ...safe }) => ({ ...safe, hasPreview: Boolean(previewPath) }));
-      case 'apply': return this.apply(String(payload?.id || ''), payload?.settings || {});
+      case 'vocabSave': return this.vocabulary.save(payload?.text);
+      case 'vocabList': return this.vocabulary.list();
+      case 'vocabUpdate': return this.vocabulary.update(payload?.id,payload?.revision,payload?.changes||{});
+      case 'geminiDock': return this.geminiDock('attach',payload);
+      case 'geminiMove': return this.geminiDock('move',payload);
+      case 'geminiDetach': return this.geminiDock('detach',payload);
+      case 'geminiHide': return this.geminiWindow('hide');
+      case 'geminiShow': return this.geminiWindow('show');
+      case 'list': return this.wallpapers.map(({ projectRoot, filePath, previewPath, playablePath, ...safe }) => ({ ...safe, hasPreview: Boolean(previewPath), previewUrl: previewPath ? 'http://127.0.0.1:' + this.port + '/media/' + encodeURIComponent(safe.id) + '?token=' + encodeURIComponent(this.state.apiToken) + '&preview=1' : null, mediaUrl: playablePath ? 'http://127.0.0.1:' + this.port + '/media/' + encodeURIComponent(safe.id) + '?token=' + encodeURIComponent(this.state.apiToken) : null }));
+      case 'apply': return this.acceptApply(String(payload?.id || ''), payload?.settings || {});
       case 'settings': return this.updateSettings(payload || {});
       case 'ui': return this.updateUi(payload || {});
       case 'renameImport': return this.renameImport(payload?.id, payload?.title);
       case 'deleteImport': return this.deleteImport(payload?.id);
-      case 'setDefault': return this.setDefault(payload?.id);
+      case 'setDefault': return this.acceptDefault(payload?.id);
       case 'importBegin': return this.importBegin(payload?.name);
       case 'importChunk': return this.importChunk(payload?.uploadId, payload?.base64);
       case 'importFinish': return this.importFinish(payload?.uploadId);
@@ -109,6 +123,33 @@ export class GPTDaddyDaemon {
       default: throw new Error('Unknown desktop control action');
     }
   }
+
+  async geminiDock(action,payload={}) {
+    if(process.platform!=='win32') throw new Error('Gemini window docking requires Windows');
+    const besideRuntime=join(dirname(resolve(process.argv[1]||'')),'scripts','gemini-dock.ps1');
+    const script=process.env.GPTDADDY_GEMINI_DOCK_SCRIPT || (existsSync(besideRuntime)?besideRuntime:join(process.cwd(),'scripts','gemini-dock.ps1'));
+    const args=['-NoProfile','-ExecutionPolicy','Bypass','-File',script,'-Action',action];
+    if(action!=='detach'){
+      for(const [key,value] of Object.entries({ParentWidth:payload.parentWidth,X:payload.x,Y:payload.y,Width:payload.width,Height:payload.height})){
+        if(!Number.isInteger(value)||value<0||value>10000)throw new Error('Invalid Gemini dock geometry');
+        args.push('-'+key,String(value));
+      }
+    }
+    const {stdout}=await execFileAsync('powershell.exe',args,{timeout:25000,windowsHide:true});
+    if(action==='attach') {
+      const helper=join(dirname(resolve(process.argv[1]||'')),'gemini-window.exe');
+      if(existsSync(helper)) spawn(helper,['watch'],{detached:true,windowsHide:true,stdio:'ignore'}).unref();
+    }
+    return JSON.parse(stdout.trim());
+  }
+
+  async geminiWindow(action) {
+    const helper=join(dirname(resolve(process.argv[1]||'')),'gemini-window.exe');
+    if(!existsSync(helper)) throw new Error('Gemini window helper is unavailable');
+    await execFileAsync(helper,[action],{timeout:3000,windowsHide:true});
+    return {ok:true};
+  }
+
 
   async start() {
     this.nativeRestart.start();
@@ -144,6 +185,8 @@ export class GPTDaddyDaemon {
     if (this.state.wallpaper.enabled && restoreId) {
       try { await this.apply(restoreId, this.state.wallpaper, false); }
       catch (error) { this.logger.warn?.(`Could not restore wallpaper: ${error.message}`); }
+    } else {
+      await this.lifecycle.apply({pluginVersion:APP_VERSION});
     }
     if (!this.catalogIsFixed) void this.refreshCatalog();
     this.localStore.resumePending();
@@ -193,13 +236,44 @@ export class GPTDaddyDaemon {
     return this.status();
   }
 
+  acceptApply(id, settings = {}) {
+    const project = this.byId.get(id);
+    if (!project) throw new Error(`Wallpaper project not found: ${id}`);
+    if (!['native-video', 'native-image'].includes(project.capability) || !project.playablePath) throw new Error(`Wallpaper cannot currently play (${project.capability})`);
+    const previous = this.state.wallpaper;
+    this.state.wallpaper = { ...previous, ...normalizeSettings(settings), id, enabled: true };
+    let config;
+    try {
+      config = this.#renderConfig(project);
+      writeState(this.state, this.stateFile);
+    } catch (error) {
+      this.state.wallpaper = previous;
+      throw error;
+    }
+    void this.lifecycle.apply(config).then(() => this.lifecycle.sampleMetrics()).catch((error) => {
+      if (this.state.wallpaper.id !== id) return;
+      this.lifecycle.lastError = error instanceof Error ? error.message : String(error);
+      this.logger.warn?.(`Wallpaper apply failed: ${this.lifecycle.lastError}`);
+    });
+    return this.status();
+  }
+
+  acceptDefault(id) {
+    const project = this.byId.get(String(id || ''));
+    if (!project || !['native-video', 'native-image'].includes(project.capability)) throw new Error('Wallpaper is not ready to become the default');
+    this.state.wallpaper.defaultId = project.id;
+    return this.acceptApply(project.id);
+  }
+
   async updateSettings(settings) {
     this.state.wallpaper = { ...this.state.wallpaper, ...normalizeSettings(settings) };
     writeState(this.state, this.stateFile);
     const project = this.byId.get(this.state.wallpaper.id);
     if (this.state.wallpaper.enabled && project) {
-      await this.lifecycle.apply(this.#renderConfig(project));
-      await this.lifecycle.sampleMetrics();
+      const config = this.#renderConfig(project);
+      this.lifecycle.config = config;
+      const visual = Object.fromEntries(Object.entries(config).filter(([key]) => key !== 'sourceUrl'));
+      await this.lifecycle.evaluate(`window.__gptDaddyWallpaperControllerV1?.configure(${JSON.stringify(visual)})`);
     }
     return this.status();
   }
@@ -272,12 +346,11 @@ export class GPTDaddyDaemon {
   }
 
   previewImport(id) {
-    const item = this.localStore.list().find((row) => row.id === id);
+    const item = this.byId.get(String(id || '')) || this.localStore.list().find((row) => row.id === id);
     if (!item?.previewPath) return null;
-    const size = statSync(item.previewPath).size;
-    if (size > 96 * 1024) return null;
+    if (statSync(item.previewPath).size > 2 * 1024 * 1024) throw new Error(`Preview exceeds 2MB limit: ${id}`);
     const extension = extname(item.previewPath).toLowerCase();
-    const mime = extension === '.jpg' || extension === '.jpeg' ? 'image/jpeg' : extension === '.png' ? 'image/png' : extension === '.webp' ? 'image/webp' : null;
+    const mime = { '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.png': 'image/png', '.webp': 'image/webp', '.gif': 'image/gif', '.bmp': 'image/bmp' }[extension];
     return mime ? `data:${mime};base64,${readFileSync(item.previewPath).toString('base64')}` : null;
   }
 
@@ -309,6 +382,7 @@ export class GPTDaddyDaemon {
     this.state.wallpaper.enabled = false;
     writeState(this.state, this.stateFile);
     await this.lifecycle.remove();
+    await this.lifecycle.apply({pluginVersion:APP_VERSION});
     return this.status();
   }
 

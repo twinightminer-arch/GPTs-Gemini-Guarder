@@ -10,7 +10,7 @@ export function defaultState() {
     schemaVersion: 1,
     apiToken: randomBytes(32).toString('hex'),
     nativeRestart: { enabled: true },
-    ui: { pageColor: '#101820' },
+    ui: { pageColor: '#47bee6' },
     wallpaper: {
       enabled: false,
       id: null,
@@ -23,6 +23,7 @@ export function defaultState() {
       positionX: 50,
       positionY: 50,
       muted: true,
+      volume: 0,
       fontColor: null,
       composerBackgroundColor: '#ffffff',
     },

@@ -1,0 +1,22 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "gpts-gemini-guarder",
+  "version": "0.2.0",
+  "description": "Embed the real Gemini web app in the Codex floating panel; manage wallpapers, selected-text translation, and a user-owned local vocabulary collection.",
+  "extensions": {
+    "com.openai": {
+      "requires_local_executor": true,
+      "onboardingSkill": "./skills/gemini-guarder/SKILL.md",
+      "interface": {
+        "displayName": "GPT's Gemini Guarder",
+        "shortDescription": "面板内对话 Gemini，管理壁纸、划词翻译与本地生词本",
+        "developerName": "Personal",
+        "category": "Productivity",
+        "capabilities": ["Read", "Write"],
+        "brandColor": "#5A72D9",
+        "composerIcon": "./assets/icon.png",
+        "logo": "./assets/logo.png"
+      }
+    }
+  }
+}

@@ -32,16 +32,10 @@ Name: "{group}\GPTDaddy 控制面板"; Filename: "http://127.0.0.1:34873/"
 Name: "{userdesktop}\GPTDaddy 控制面板"; Filename: "http://127.0.0.1:34873/"; Tasks: desktopicon
 
 [Registry]
-Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "GPTDaddy"; ValueData: """{sys}\wscript.exe"" //B //Nologo ""{app}\scripts\start-daemon-hidden.vbs"""; Flags: uninsdeletevalue
+Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "GPTDaddy"; ValueData: """{sys}\WindowsPowerShell\v1.0\powershell.exe"" -NoLogo -NoProfile -NonInteractive -WindowStyle Hidden -ExecutionPolicy RemoteSigned -File ""{app}\scripts\runtime-daemon.ps1"""; Flags: uninsdeletevalue
 
 [Run]
-Filename: "{sys}\WindowsPowerShell\v1.0\powershell.exe"; Parameters: "-NoLogo -NoProfile -NonInteractive -WindowStyle Hidden -ExecutionPolicy RemoteSigned -File ""{app}\scripts\install-daemon-watchdog.ps1"" -Uninstall"; Description: "移除旧版周期检查任务"; Flags: runhidden
-Filename: "{sys}\WindowsPowerShell\v1.0\powershell.exe"; Parameters: "-NoLogo -NoProfile -NonInteractive -WindowStyle Hidden -ExecutionPolicy RemoteSigned -File ""{app}\scripts\install-daemon-startup.ps1"""; Description: "注册一次性隐藏登录启动"; Flags: runhidden
 Filename: "{sys}\WindowsPowerShell\v1.0\powershell.exe"; Parameters: "-NoLogo -NoProfile -NonInteractive -WindowStyle Hidden -ExecutionPolicy RemoteSigned -File ""{app}\scripts\activate-installed-daemon.ps1"""; Description: "更新并启动 GPTDaddy 后台服务"; Flags: runhidden
-
-[UninstallRun]
-Filename: "{sys}\WindowsPowerShell\v1.0\powershell.exe"; Parameters: "-NoLogo -NoProfile -NonInteractive -WindowStyle Hidden -ExecutionPolicy RemoteSigned -File ""{app}\scripts\install-daemon-watchdog.ps1"" -Uninstall"; RunOnceId: "RemoveGPTDaddyWatchdog"; Flags: runhidden
-Filename: "{sys}\WindowsPowerShell\v1.0\powershell.exe"; Parameters: "-NoLogo -NoProfile -NonInteractive -WindowStyle Hidden -ExecutionPolicy RemoteSigned -File ""{app}\scripts\install-daemon-startup.ps1"" -Uninstall"; RunOnceId: "RemoveGPTDaddyStartup"; Flags: runhidden
 
 [Code]
 function GetStableInstallDir(Param: String): String;

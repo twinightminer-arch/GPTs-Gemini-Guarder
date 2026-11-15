@@ -55,18 +55,6 @@ public static class GptDaddyForeground {
   [DllImport("user32.dll")] private static extern bool IsWindowVisible(IntPtr window);
   [DllImport("user32.dll")] public static extern IntPtr GetForegroundWindow();
   [DllImport("user32.dll")] public static extern uint GetWindowThreadProcessId(IntPtr window, out uint processId);
-  [DllImport("user32.dll")] private static extern void keybd_event(byte key, byte scan, uint flags, UIntPtr extra);
-  public static bool QuitShortcutIfForeground(uint pid) {
-    IntPtr window = GetForegroundWindow();
-    uint owner;
-    GetWindowThreadProcessId(window, out owner);
-    if (owner != pid || !IsWindowVisible(window)) return false;
-    keybd_event(0x11, 0, 0, UIntPtr.Zero);
-    keybd_event(0x51, 0, 0, UIntPtr.Zero);
-    keybd_event(0x51, 0, 2, UIntPtr.Zero);
-    keybd_event(0x11, 0, 2, UIntPtr.Zero);
-    return true;
-  }
   public static IntPtr[] VisibleWindows(uint pid) {
     var windows = new List<IntPtr>();
     EnumWindows((window, data) => {
@@ -154,84 +142,41 @@ public static class GptDaddyActivation {
     if ($mainWindow -eq [IntPtr]::Zero) { Start-Sleep -Milliseconds 500 }
   }
   if ($mainWindow -eq [IntPtr]::Zero) {
-    # The updated native title bar does not expose the File menu to UI
-    # Automation. Its Quit shortcut may be sent only when Codex itself already
-    # owns the foreground; never steal focus or type into another application.
-    $mainWindow = $process.MainWindowHandle
-    if ($mainWindow -eq [IntPtr]::Zero -or
-        -not ([GptDaddyForeground]::VisibleWindows([uint32]$ExpectedProcessId) -contains $mainWindow)) {
-      $report.result = 'deferred'
-      $report.error = 'The verified Codex main window is not ready.'
-      return
-    }
-    $report.chatWindowHandle = $mainWindow.ToInt64()
-    if (-not [GptDaddyForeground]::QuitShortcutIfForeground([uint32]$ExpectedProcessId)) {
-      $report.result = 'deferred'
-      $report.error = 'Codex is not the foreground window; no shortcut was sent.'
-      return
-    }
-    $report.closeMethod = 'Verified foreground Codex Ctrl+Q'
-    $report.quitRequested = $true
-  } else {
-    $report.chatWindowHandle = $mainWindow.ToInt64()
-    $chatRoot = [System.Windows.Automation.AutomationElement]::FromHandle($mainWindow)
-    $fileMenu = $chatRoot.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $fileMenuCondition)
-    $expand = $fileMenu.GetCurrentPattern([System.Windows.Automation.ExpandCollapsePattern]::Pattern)
-    $report.fileMenuStateBefore = [string]$expand.Current.ExpandCollapseState
-    if ($expand.Current.ExpandCollapseState -ne [System.Windows.Automation.ExpandCollapseState]::Expanded) { $expand.Expand() }
-    $quitItem = $null
-    for ($attempt = 0; $attempt -lt 10 -and -not $quitItem; $attempt++) {
-      Start-Sleep -Milliseconds 150
-      $items = $chatRoot.FindAll([System.Windows.Automation.TreeScope]::Descendants,
-        (New-Object System.Windows.Automation.PropertyCondition(
-          [System.Windows.Automation.AutomationElement]::ControlTypeProperty,
-          [System.Windows.Automation.ControlType]::MenuItem)))
-      $foundItems = @($items | Where-Object { $_.Current.Name -match 'ChatGPT Ctrl\+Q$' })
-      if ($foundItems.Count -eq 1) { $quitItem = $foundItems[0] }
-      if ($attempt -eq 9) {
-        $report.fileMenuStateAfter = [string]$expand.Current.ExpandCollapseState
-        $report.visibleMenuItems = @($items | ForEach-Object { $_.Current.Name } | Where-Object { $_ -and $_.Length -lt 80 })
-      }
-    }
-    if ($quitItem) {
-      $quitItem.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
-      $report.quitRequested = $true
-    } else {
-      # The menu trigger can exist while the updated app no longer exposes its
-      # Quit item to UI Automation. Fall back only to this verified process's
-      # visible main window; never send input to an unrelated foreground app.
-      $verifiedWindow = $process.MainWindowHandle
-      if ($verifiedWindow -eq [IntPtr]::Zero -or
-          -not ([GptDaddyForeground]::VisibleWindows([uint32]$ExpectedProcessId) -contains $verifiedWindow)) {
-        $report.result = 'deferred'
-        $report.error = 'Codex Quit item and verified main window are unavailable.'
-        return
-      }
-      $report.closeMethod = 'Verified Codex main window WM_CLOSE'
-      $report.chatWindowHandle = $verifiedWindow.ToInt64()
-      if (-not $process.CloseMainWindow()) { throw 'Verified Codex main window refused WM_CLOSE; no process was stopped.' }
-      $report.quitRequested = $true
+    # A login-started daemon can see the process before its interactive window exists.
+    # Do not close or reactivate Codex until its own Quit control is safely available.
+    $report.result = 'deferred'
+    $report.error = 'The verified Codex chat window and File menu are not ready.'
+    return
+  }
+  $report.chatWindowHandle = $mainWindow.ToInt64()
+  $chatRoot = [System.Windows.Automation.AutomationElement]::FromHandle($mainWindow)
+  $fileMenu = $chatRoot.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $fileMenuCondition)
+  $expand = $fileMenu.GetCurrentPattern([System.Windows.Automation.ExpandCollapsePattern]::Pattern)
+  $report.fileMenuStateBefore = [string]$expand.Current.ExpandCollapseState
+  if ($expand.Current.ExpandCollapseState -ne [System.Windows.Automation.ExpandCollapseState]::Expanded) { $expand.Expand() }
+  $quitItem = $null
+  for ($attempt = 0; $attempt -lt 10 -and -not $quitItem; $attempt++) {
+    Start-Sleep -Milliseconds 150
+    $items = $chatRoot.FindAll([System.Windows.Automation.TreeScope]::Descendants,
+      (New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::ControlTypeProperty,
+        [System.Windows.Automation.ControlType]::MenuItem)))
+    $foundItems = @($items | Where-Object { $_.Current.Name -match 'ChatGPT Ctrl\+Q$' })
+    if ($foundItems.Count -eq 1) { $quitItem = $foundItems[0] }
+    if ($attempt -eq 9) {
+      $report.fileMenuStateAfter = [string]$expand.Current.ExpandCollapseState
+      $report.visibleMenuItems = @($items | ForEach-Object { $_.Current.Name } | Where-Object { $_ -and $_.Length -lt 80 })
     }
   }
+  if (-not $quitItem) { throw 'Codex File > Quit was not found; no process was stopped.' }
+  $quitItem.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
+  $report.quitRequested = $true
   for ($index = 0; $index -lt 30; $index++) {
     Start-Sleep -Seconds 1
     if (-not (Get-Process -Id $ExpectedProcessId -ErrorAction SilentlyContinue)) { break }
   }
   if (Get-Process -Id $ExpectedProcessId -ErrorAction SilentlyContinue) {
-    $verifiedWindow = $process.MainWindowHandle
-    if ($verifiedWindow -ne [IntPtr]::Zero -and
-        ([GptDaddyForeground]::VisibleWindows([uint32]$ExpectedProcessId) -contains $verifiedWindow)) {
-      $report.closeMethod = 'Codex Quit followed by verified main window WM_CLOSE'
-      if ($process.CloseMainWindow()) {
-        for ($index = 0; $index -lt 15; $index++) {
-          Start-Sleep -Seconds 1
-          if (-not (Get-Process -Id $ExpectedProcessId -ErrorAction SilentlyContinue)) { break }
-        }
-      }
-    }
-  }
-  if (Get-Process -Id $ExpectedProcessId -ErrorAction SilentlyContinue) {
-    throw 'Codex did not exit after graceful Quit or WM_CLOSE; no force-stop was used.'
+    throw 'Codex did not exit after its own Ctrl+Q; no force-stop was used.'
   }
   $report.previousProcessExited = $true
 
@@ -247,23 +192,19 @@ public static class GptDaddyActivation {
   if (-not $newMain -or $newMain.ExecutablePath -ne $exe) { throw 'Activation did not yield the verified Codex executable.' }
   $report.newProcessId = $newMain.ProcessId
   $report.commandLineHasCdp = [bool]($newMain.CommandLine -match [regex]::Escape("--remote-debugging-port=$CdpPort"))
+  Start-Sleep -Seconds 10
   $statePath = Join-Path $env:LOCALAPPDATA 'GPTDaddy\state.json'
   if (Test-Path -LiteralPath $statePath) {
     $state = Get-Content -LiteralPath $statePath -Raw | ConvertFrom-Json
     $report.wallpaperEnabled = [bool]$state.wallpaper.enabled
     if ($state.apiToken) {
-      for ($attempt = 0; $attempt -lt 30; $attempt++) {
-        Start-Sleep -Seconds 2
-        try {
-          $status = Invoke-RestMethod -Uri 'http://127.0.0.1:34873/api/status' -Headers @{
-            Authorization = "Bearer $($state.apiToken)"
-          } -TimeoutSec 3
-          $report.lifecycleActive = [bool]$status.lifecycle.active
-          $report.playbackHealthy = [bool]$status.lifecycle.playbackHealthy
-          if ($report.lifecycleActive) { break }
-        } catch { $report.statusError = $_.Exception.Message }
-        if (-not (Get-Process -Id $report.newProcessId -ErrorAction SilentlyContinue)) { break }
-      }
+      try {
+        $status = Invoke-RestMethod -Uri 'http://127.0.0.1:34873/api/status' -Headers @{
+          Authorization = "Bearer $($state.apiToken)"
+        } -TimeoutSec 5
+        $report.lifecycleActive = [bool]$status.lifecycle.active
+        $report.playbackHealthy = [bool]$status.lifecycle.playbackHealthy
+      } catch { $report.statusError = $_.Exception.Message }
     }
   }
   $report.result = if ($report.commandLineHasCdp -and $report.lifecycleActive) { 'passed' } else { 'failed' }

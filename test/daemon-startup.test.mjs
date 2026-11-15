@@ -3,11 +3,10 @@ import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
-import { tmpdir } from 'node:os';
 import { GPTDaddyDaemon } from '../src/daemon.mjs';
 
 test('control API starts without waiting for Windows discovery and preserves UI color', async (context) => {
-  const directory = mkdtempSync(join(tmpdir(), 'gptdaddy-start-test-'));
+  const directory = mkdtempSync(join(process.cwd(), '.gptdaddy-start-test-'));
   context.after(() => rmSync(directory, { recursive: true, force: true }));
   const daemon = new GPTDaddyDaemon({ dataRoot: directory, port: 0, wallpapers: [] });
   daemon.localStore.generatePreviews = false;
@@ -22,7 +21,7 @@ test('control API starts without waiting for Windows discovery and preserves UI 
   const status = await (await fetch(`${base}/api/status`, { headers })).json();
   const statusMs = performance.now() - statusStarted;
   context.diagnostic(`fresh control listener ${startupMs.toFixed(1)}ms; first status ${statusMs.toFixed(1)}ms`);
-  assert.equal(status.ui.pageColor, '#101820');
+  assert.equal(status.ui.pageColor, '#47bee6');
   assert.equal(startupMs < 1500, true, `Control listener took ${startupMs.toFixed(1)}ms`);
   const changed = await (await fetch(`${base}/api/ui`, { method: 'POST', headers, body: JSON.stringify({ pageColor: '#ffffff' }) })).json();
   assert.equal(changed.ui.pageColor, '#ffffff');

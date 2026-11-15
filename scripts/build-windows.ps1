@@ -12,15 +12,21 @@ New-Item -ItemType Directory -Path (Join-Path $out 'public') -Force | Out-Null
 New-Item -ItemType Directory -Path (Join-Path $out 'scripts') -Force | Out-Null
 $mainOut = Join-Path $out 'main.mjs'
 $workerOut = Join-Path $out 'catalog-worker.mjs'
+$windowOut = Join-Path $out 'gemini-window.exe'
 & $esbuild (Join-Path $root 'src\cli.mjs') --bundle --platform=node --format=esm --target=node22 --minify "--outfile=$mainOut"
 if ($LASTEXITCODE -ne 0) { throw 'Main bundle failed' }
 & $esbuild (Join-Path $root 'src\wallpaper\catalog-worker.mjs') --bundle --platform=node --format=esm --target=node22 --minify "--outfile=$workerOut"
 if ($LASTEXITCODE -ne 0) { throw 'Catalog worker bundle failed' }
+$compiler = Join-Path $env:WINDIR 'Microsoft.NET\Framework64\v4.0.30319\csc.exe'
+if (-not (Test-Path -LiteralPath $compiler)) { throw 'Windows C# compiler is unavailable' }
+& $compiler /nologo /target:winexe "/out:$windowOut" (Join-Path $root 'scripts\gemini-window.cs')
+if ($LASTEXITCODE -ne 0) { throw 'Gemini window helper build failed' }
+Copy-Item -LiteralPath (Join-Path $root 'src\wallpaper\gemini.png') -Destination (Join-Path $out 'gemini.png') -Force
 Copy-Item -LiteralPath $node -Destination (Join-Path $out 'node.exe') -Force
 foreach ($file in @('index.html','app.js','styles.css')) {
   Copy-Item -LiteralPath (Join-Path $root "public\$file") -Destination (Join-Path $out "public\$file") -Force
 }
-foreach ($file in @('activate-packaged-codex.ps1','activate-installed-daemon.ps1','runtime-daemon.ps1','ensure-installed-daemon.ps1','install-daemon-watchdog.ps1','install-daemon-startup.ps1','start-daemon-hidden.vbs')) {
+foreach ($file in @('activate-packaged-codex.ps1','activate-installed-daemon.ps1','runtime-daemon.ps1','gemini-dock.ps1')) {
   Copy-Item -LiteralPath (Join-Path $root "scripts\$file") -Destination (Join-Path $out "scripts\$file") -Force
 }
 foreach ($file in @('LICENSE','THIRD_PARTY_NOTICES.md','README.md')) {

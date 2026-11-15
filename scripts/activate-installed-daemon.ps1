@@ -13,11 +13,10 @@ $listeners = @(Get-NetTCPConnection -LocalAddress '127.0.0.1' -LocalPort 34873 -
 $owners = @($listeners | Select-Object -ExpandProperty OwningProcess -Unique)
 if ($owners.Count -gt 1) { throw 'Multiple processes own the GPTDaddy control listener; refusing takeover.' }
 if ($owners.Count -eq 0) {
-  $health = $null
   try {
     $health = Invoke-RestMethod -Uri 'http://127.0.0.1:34873/health' -TimeoutSec 1
-  } catch { }
-  if ($health -and $health.ok) { throw 'GPTDaddy is healthy but its listener owner could not be verified; refusing takeover.' }
+    if ($health.ok) { throw 'GPTDaddy is healthy but its listener owner could not be verified; refusing takeover.' }
+  } catch [System.Net.WebException] { }
 }
 $daemonPid = if ($owners.Count -eq 1) { [int]$owners[0] } else { 0 }
 $daemon = if ($daemonPid) { Get-CimInstance Win32_Process -Filter "ProcessId=$daemonPid" } else { $null }
@@ -55,16 +54,11 @@ if ($daemonPid) {
   if (Get-Process -Id $daemonPid -ErrorAction SilentlyContinue) { throw 'The exact old GPTDaddy daemon did not exit.' }
 }
 
-$startupTask = Get-ScheduledTask -TaskName 'GPTDaddy-Daemon-Startup' -ErrorAction SilentlyContinue
-if ($startupTask) {
-  Start-ScheduledTask -TaskName 'GPTDaddy-Daemon-Startup'
-} else {
-  $powershell = (Get-Command powershell.exe -ErrorAction Stop).Source
-  Start-Process -FilePath $powershell -ArgumentList @(
-    '-NoLogo', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',
-    '-ExecutionPolicy', 'RemoteSigned', '-File', ('"' + $runner + '"')
-  ) -WindowStyle Hidden | Out-Null
-}
+$powershell = (Get-Command powershell.exe -ErrorAction Stop).Source
+Start-Process -FilePath $powershell -ArgumentList @(
+  '-NoLogo', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',
+  '-ExecutionPolicy', 'RemoteSigned', '-File', ('"' + $runner + '"')
+) -WindowStyle Hidden | Out-Null
 
 $ready = $false
 for ($attempt = 0; $attempt -lt 40; $attempt++) {

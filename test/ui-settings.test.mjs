@@ -16,11 +16,11 @@ test('all four sliders round-trip every 0–100 integer without rollback', () =>
   assert.equal(uiToSetting('blurPx', 100), 100);
 });
 
-test('in-app panel retains its separate appearance and optimistic save', () => {
+test('in-app panel previews changes and saves automatically', () => {
   const script = buildInappPanelScript();
   assert.doesNotThrow(() => new Function(script));
-  assert.match(script, /background: #101820f5; box-shadow: 0 18px 60px #0009/);
-  assert.match(script, /wallpaper: \{ \.\.\.status\.wallpaper, \.\.\.settings \}/);
+  assert.match(script, /__gptDaddyWallpaperControllerV1\?\.configure\(settings\)/);
+  assert.doesNotMatch(script, /data-action="save"/);
   assert.match(script, /status = await request\('settings', settings\)/);
   for (const key of ['opacity', 'scrimOpacity', 'blurPx', 'zoom']) {
     assert.match(script, new RegExp(`data-setting="${key}" type="range" min="0" max="100"`));

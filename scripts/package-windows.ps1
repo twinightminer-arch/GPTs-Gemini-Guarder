@@ -15,7 +15,6 @@ $runtimeFiles = @(
   'scripts/restart-user-daemon.cmd', 'scripts/restart-user-daemon.ps1',
   'scripts/run-user-daemon.ps1',
   'scripts/activate-packaged-codex.ps1',
-  'scripts/ensure-installed-daemon.ps1', 'scripts/install-daemon-watchdog.ps1', 'scripts/start-daemon-hidden.vbs',
   'scripts/validate-live-codex.cmd', 'scripts/validate-live-codex.ps1'
 )
 $runtimeFiles += Get-ChildItem -LiteralPath (Join-Path $projectRoot 'src') -Recurse -File |
@@ -30,7 +29,6 @@ foreach ($relative in $runtimeFiles) {
 }
 
 New-Item -ItemType Directory -Path $dist -Force | Out-Null
-Add-Type -AssemblyName System.IO.Compression
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 $archive = [IO.Compression.ZipFile]::Open($archivePath, [IO.Compression.ZipArchiveMode]::Create)
 try {

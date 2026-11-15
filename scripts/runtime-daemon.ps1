@@ -5,6 +5,7 @@ $main = Join-Path $runtime 'main.mjs'
 $env:GPTDADDY_PUBLIC_ROOT = Join-Path $runtime 'public'
 $env:GPTDADDY_CATALOG_WORKER = Join-Path $runtime 'catalog-worker.mjs'
 $env:GPTDADDY_ACTIVATION_SCRIPT = Join-Path $PSScriptRoot 'activate-packaged-codex.ps1'
+$env:GPTDADDY_GEMINI_DOCK_SCRIPT = Join-Path $PSScriptRoot 'gemini-dock.ps1'
 
 while ($true) {
   if (-not (Test-Path -LiteralPath $node) -or -not (Test-Path -LiteralPath $main)) { exit 2 }

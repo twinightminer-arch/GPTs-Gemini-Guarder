@@ -1,4 +1,5 @@
 import { buildInappPanelScript } from './inapp-panel.mjs';
+import { buildSelectionScript } from './selection-menu.mjs';
 
 async function installWallpaperHost(initialConfig) {
   const GLOBAL_KEY = '__gptDaddyWallpaperControllerV1';
@@ -101,7 +102,6 @@ async function installWallpaperHost(initialConfig) {
     '#root [class*="app-shell-header-toolbar"] svg',
   ];
   const chromeOriginals = new Map();
-  const chatWorkClickHandlers = new Map();
   function restoreChromeFontColor() {
     for (const [element, original] of chromeOriginals) {
       if (original.value) element.style.setProperty('color', original.value, original.priority);
@@ -133,53 +133,6 @@ async function installWallpaperHost(initialConfig) {
   }
 
   function markSpecialSurfaces() {
-    for (const [button, handler] of chatWorkClickHandlers) {
-      if (!button.isConnected) {
-        button.removeEventListener('click', handler);
-        chatWorkClickHandlers.delete(button);
-      }
-    }
-    const switchCandidates = [...document.querySelectorAll('#root button, #root [role="tab"]')]
-      .filter((element) => /^(?:聊天|工作|Chat|Work)$/.test(element.textContent?.trim() || ''));
-    for (const option of switchCandidates) {
-      const partner = switchCandidates.find((candidate) => candidate !== option &&
-        ((/^(?:聊天|Chat)$/.test(option.textContent?.trim() || '') && /^(?:工作|Work)$/.test(candidate.textContent?.trim() || '')) ||
-         (/^(?:工作|Work)$/.test(option.textContent?.trim() || '') && /^(?:聊天|Chat)$/.test(candidate.textContent?.trim() || ''))) &&
-        candidate.parentElement === option.parentElement);
-      const container = partner ? option.parentElement : null;
-      if (!container) continue;
-      const buttons = [option, partner];
-      const labels = new Set(buttons.map((button) => button.textContent?.trim()));
-      const isPair = buttons.length === 2 &&
-        ((labels.has('聊天') && labels.has('工作')) || (labels.has('Chat') && labels.has('Work')));
-      const bounds = container.getBoundingClientRect();
-      if (!isPair || bounds.width > 460 || bounds.height > 120) continue;
-      const isSelected = (button) => button.getAttribute('aria-selected') === 'true' ||
-        button.getAttribute('aria-pressed') === 'true' || button.getAttribute('aria-checked') === 'true' ||
-        button.getAttribute('data-state') === 'active' ||
-        (button.hasAttribute('data-selected') && button.getAttribute('data-selected') !== 'false');
-      const brightness = (button) => {
-        const channels = getComputedStyle(button).backgroundColor.match(/[\d.]+/g)?.map(Number) || [];
-        return channels.length >= 3 ? channels[0] * .2126 + channels[1] * .7152 + channels[2] * .0722 : -1;
-      };
-      const active = buttons.find(isSelected) || buttons.find((button) => button.hasAttribute('data-gptdaddy-chat-work-active')) ||
-        buttons.toSorted((a, b) => brightness(b) - brightness(a))[0];
-      container.setAttribute('data-gptdaddy-chat-work-switch', '');
-      for (const button of buttons) {
-        button.setAttribute('data-gptdaddy-chat-work-option', '');
-        button.toggleAttribute('data-gptdaddy-chat-work-active', button === active);
-        if (chatWorkClickHandlers.has(button)) continue;
-        const handler = () => {
-          for (const sibling of buttons) sibling.toggleAttribute('data-gptdaddy-chat-work-active', sibling === button);
-        };
-        button.addEventListener('click', handler);
-        chatWorkClickHandlers.set(button, handler);
-      }
-    }
-    const filePattern = /\.(?:docx?|pdf|xlsx?|pptx?|txt|md|png|jpe?g|webp|gif|svg|zip|mjs|js|ts|tsx)(?:\s|$)|^[a-z]:[\\/]|^\\\\|^file:/i;
-    for (const chip of document.querySelectorAll('#root main [class*="_Mention_"], #root main [class*="_FileLink_"]')) {
-      chip.toggleAttribute('data-gptdaddy-file-chip', filePattern.test(chip.textContent?.trim() || ''));
-    }
     for (const menu of document.querySelectorAll('[role="menu"][aria-labelledby]')) {
       const trigger = document.getElementById(menu.getAttribute('aria-labelledby'));
       if (trigger?.getAttribute('data-composer-navigation-target') === 'permissions') {
@@ -193,34 +146,11 @@ async function installWallpaperHost(initialConfig) {
         menu.removeAttribute('data-gptdaddy-profile-menu');
       }
     }
-    for (const shell of document.querySelectorAll('#root [class^="_shell_"], #root [class^="shell-"]')) {
-      const row = shell.querySelector('[class^="_headerRow_"], [class^="headerRow-"]');
+    for (const shell of document.querySelectorAll('#root [class^="_shell_"]')) {
+      const row = shell.querySelector('[class^="_headerRow_"]');
       const title = row?.querySelector('h1,h2')?.textContent?.trim() || row?.innerText?.trim().split('\n')[0];
       if (title === '资料库' || title === '插件' || title === '技能') shell.setAttribute('data-gptdaddy-flat-header', '');
       else shell.removeAttribute('data-gptdaddy-flat-header');
-    }
-    for (const button of document.querySelectorAll('#root button')) {
-      button.toggleAttribute('data-gptdaddy-view-changes', /^(?:查看变更|View changes)$/i.test(button.textContent?.trim() || ''));
-    }
-    for (const popup of document.querySelectorAll('[role="menu"], [role="toolbar"], [data-radix-popper-content-wrapper]')) {
-      const labels = [...popup.querySelectorAll('button,[role="menuitem"]')].map((item) => item.textContent?.trim() || '');
-      popup.toggleAttribute('data-gptdaddy-selection-menu',
-        labels.some((label) => /^(?:添加到对话|Add to chat)$/.test(label)) &&
-        labels.some((label) => /^(?:在侧边聊天中提问|Ask in sidebar)$/.test(label)));
-    }
-    // The selection toolbar can be a plain portal div rather than a role=menu.
-    const actions = [...document.querySelectorAll('body button, body [role="button"], body [role="menuitem"]')];
-    const addToChat = actions.find((item) => /^(?:添加到对话|Add to chat)$/.test(item.textContent?.trim() || ''));
-    const askSidebar = actions.find((item) => /^(?:在侧边聊天中提问|Ask in sidebar)$/.test(item.textContent?.trim() || ''));
-    if (addToChat && askSidebar) {
-      let surface = addToChat.parentElement;
-      for (let depth = 0; surface && depth < 6 && !surface.contains(askSidebar); depth++) surface = surface.parentElement;
-      const rect = surface?.getBoundingClientRect();
-      if (rect && rect.width > 80 && rect.width < 500 && rect.height > 20 && rect.height < 160 &&
-          (['absolute', 'fixed'].includes(getComputedStyle(surface).position) ||
-           ['absolute', 'fixed'].includes(getComputedStyle(surface.parentElement).position))) {
-        surface.setAttribute('data-gptdaddy-selection-menu', '');
-      }
     }
     for (const dialog of document.querySelectorAll('.codex-dialog')) {
       const fullAccessTitle = dialog.matches('[role="dialog"]') && /(?:完整|完全)访问权限|full access/i.test(dialog.querySelector('h2')?.textContent || '');
@@ -238,10 +168,30 @@ async function installWallpaperHost(initialConfig) {
   style.textContent = `
     html, body, #root { background: transparent !important; }
     body > #root { position: relative !important; z-index: 1 !important; }
+    body > div:has(webview[data-browser-sidebar-page-storage-id]) {
+      z-index: 2 !important;
+    }
     main, aside, [role="navigation"], [role="main"],
     [class*="bg-surface"], [class*="bg-elevated"] {
       background-color: rgb(var(--gptdaddy-surface-rgb, 248 250 253) / var(--gptdaddy-panel-opacity, .1)) !important;
       backdrop-filter: blur(var(--gptdaddy-panel-blur, 0px)) !important;
+    }
+    #root main {
+      background-color: transparent !important;
+      backdrop-filter: none !important;
+    }
+    #root [class*="ComposerLayoutRoot"] {
+      backdrop-filter: none !important;
+      box-shadow: none !important;
+    }
+    #root [class*="thread-scroll-container"] [class*="footer-"] {
+      background: transparent !important;
+      backdrop-filter: none !important;
+    }
+    #root [class*="thread-scroll-container"] [class*="footer-"]::before,
+    #root [class*="thread-scroll-container"] [class*="footer-"]::after {
+      background: transparent !important;
+      background-image: none !important;
     }
     #root #app-shell-sidebar > div > div {
       background-color: rgb(var(--gptdaddy-surface-rgb, 248 250 253) / var(--gptdaddy-panel-opacity, .1)) !important;
@@ -250,17 +200,6 @@ async function installWallpaperHost(initialConfig) {
     #root [class*="MainContentTopFade"],
     #root main .bg-gradient-to-t.from-surface {
       background-image: none !important;
-    }
-    /* Codex's transcript-bottom fade sits outside <main> and above the composer. */
-    #root .thread-scroll-container > [class*="container-name:thread-content"] > .sticky.bottom-0 > .from-surface[class*="_fade_"] {
-      background-image: none !important;
-    }
-    /* Newer Codex builds use fade-* instead of _fade_* for the same scroll spacer. */
-    #root .thread-scroll-container > [class*="container-name:thread-content"] > .sticky.bottom-0 > .from-surface[class*="fade-"] {
-      background-image: none !important;
-    }
-    #root [class~="group/summary-panel"] [class*="before:-top-2"]::before {
-      background-color: transparent !important;
     }
     [data-radix-popper-content-wrapper] {
       backdrop-filter: none !important;
@@ -280,79 +219,6 @@ async function installWallpaperHost(initialConfig) {
     html[data-gptdaddy-composer-color] [role="menu"][data-gptdaddy-profile-menu] :is([role="menuitem"]:hover, [role="menuitem"][data-highlighted]) {
       background-color: color-mix(in srgb, var(--gptdaddy-composer-ink) 10%, transparent) !important;
     }
-    #root [data-gptdaddy-chat-work-switch] {
-      background-color: var(--gptdaddy-composer-surface, var(--color-surface-elevated-secondary, #edf8ff)) !important;
-      border: 1px solid color-mix(in srgb, var(--gptdaddy-composer-ink, #18334f) 22%, transparent) !important;
-      backdrop-filter: none !important;
-    }
-    #root [data-gptdaddy-chat-work-switch] [class*="bg-background-mode-toggle-track"],
-    #root [class*="bg-background-mode-toggle-track"] {
-      background-color: var(--gptdaddy-composer-surface, var(--color-surface-elevated-secondary, #edf8ff)) !important;
-      background-image: none !important;
-    }
-    #root [data-gptdaddy-chat-work-switch] [class*="_indicator_"],
-    #root [class*="bg-background-mode-toggle-track"] ~ [class*="_indicator_"] {
-      background-color: color-mix(in srgb, var(--gptdaddy-composer-ink, #18334f) 12%, var(--gptdaddy-composer-surface, var(--color-surface-elevated-secondary, #edf8ff))) !important;
-      background-image: none !important;
-    }
-    #root [data-gptdaddy-chat-work-option] {
-      background-color: transparent !important;
-      color: var(--gptdaddy-composer-ink, #18334f) !important;
-    }
-    #root [data-gptdaddy-chat-work-active] {
-      background-color: color-mix(in srgb, var(--gptdaddy-composer-ink, #18334f) 12%, transparent) !important;
-      box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--gptdaddy-composer-ink, #18334f) 18%, transparent) !important;
-    }
-    #root [data-gptdaddy-chat-work-switch] [class*="bg-background-mode-toggle-track"]::before,
-    #root [data-gptdaddy-chat-work-switch] [class*="bg-background-mode-toggle-track"]::after {
-      background-color: transparent !important;
-      background-image: none !important;
-    }
-    #root [class*="resource-card-row-padding-x"] {
-      background-color: var(--gptdaddy-composer-surface, var(--color-surface-elevated-secondary, #edf8ff)) !important;
-      color: var(--gptdaddy-composer-ink, #18334f) !important;
-      background-image: none !important;
-    }
-    #root [class*="resource-card-row-padding-x"] :is(span, button, svg) {
-      color: var(--gptdaddy-composer-ink, #18334f) !important;
-      text-shadow: none !important;
-    }
-    #root [class~="group/code-snippet"] {
-      background-color: var(--gptdaddy-composer-surface, var(--color-surface-elevated-secondary, #edf8ff)) !important;
-      background-image: none !important;
-      border-color: color-mix(in srgb, var(--gptdaddy-composer-ink, #18334f) 28%, transparent) !important;
-      backdrop-filter: none !important;
-    }
-    #root [class~="group/code-snippet"] :is(code, pre, code span, pre span, button, button svg) {
-      color: var(--gptdaddy-composer-ink, #18334f) !important;
-      text-shadow: none !important;
-    }
-    #root [class~="group/writing-block-surface"] {
-      --oai-wb-surface-primary: var(--gptdaddy-composer-surface, var(--color-surface-elevated-secondary, #edf8ff)) !important;
-      --oai-wb-text-primary: var(--gptdaddy-composer-ink, #18334f) !important;
-    }
-    #root [class~="group/writing-block-surface"] > [class*="oai-wb-surface-primary"],
-    #root [class~="group/writing-block-surface"] header {
-      background-color: var(--gptdaddy-composer-surface, var(--color-surface-elevated-secondary, #edf8ff)) !important;
-      background-image: none !important;
-    }
-    #root [class~="group/writing-block-surface"] :is(header, .ProseMirror, .ProseMirror *, button) {
-      color: var(--gptdaddy-composer-ink, #18334f) !important;
-      text-shadow: none !important;
-    }
-    #root main [data-gptdaddy-file-chip] {
-      background-color: var(--gptdaddy-composer-surface, var(--color-surface-elevated-secondary, #edf8ff)) !important;
-      color: var(--gptdaddy-composer-ink, #18334f) !important;
-      border: 1px solid color-mix(in srgb, var(--gptdaddy-composer-ink, #18334f) 24%, transparent) !important;
-      border-radius: 8px !important;
-      box-decoration-break: clone;
-      overflow-wrap: anywhere;
-      text-shadow: none !important;
-    }
-    #root main [data-gptdaddy-file-chip]:is(:hover, :focus-visible) {
-      background-color: color-mix(in srgb, var(--gptdaddy-composer-ink, #18334f) 8%, var(--gptdaddy-composer-surface, var(--color-surface-elevated-secondary, #edf8ff))) !important;
-      outline-color: var(--gptdaddy-composer-ink, #18334f);
-    }
     html[data-gptdaddy-font-color] :is([role="menu"], [data-radix-popper-content-wrapper] > [role="dialog"]) :is(button, [role="menuitem"], [role="option"], span, svg) {
       color: var(--gptdaddy-font-color) !important;
     }
@@ -367,10 +233,6 @@ async function installWallpaperHost(initialConfig) {
     }
     html[data-gptdaddy-composer-color] #root :is([class*="ComposerLayoutRoot"], [data-composer-utility-bar-variant="home"] [class*="ComposerLayoutBody"]) {
       background-color: var(--gptdaddy-composer-surface) !important;
-    }
-    html[data-gptdaddy-composer-color] #root [class*="ComposerLayoutFooter"] > [class~="bg-(--composer-layout-surface-background)"] {
-      background-color: var(--gptdaddy-composer-surface) !important;
-      color: var(--gptdaddy-composer-ink) !important;
     }
     html[data-gptdaddy-composer-color] #root [class~="group/home-composer-layout"] [class*="_rail_"]:has(> [class~="bg-background-composer-action-bar"]),
     html[data-gptdaddy-composer-color] #root [class~="group/home-composer-layout"] [class~="bg-background-composer-action-bar"] {
@@ -424,23 +286,6 @@ async function installWallpaperHost(initialConfig) {
       background: transparent !important;
       opacity: 0 !important;
     }
-    #root button[data-gptdaddy-view-changes] {
-      background-color: var(--gptdaddy-composer-surface, #edf8ff) !important;
-      color: var(--gptdaddy-composer-ink, #18334f) !important;
-      border-color: color-mix(in srgb, var(--gptdaddy-composer-ink, #18334f) 18%, transparent) !important;
-    }
-    #root button[data-gptdaddy-view-changes] :is(span, svg) {
-      color: var(--gptdaddy-composer-ink, #18334f) !important;
-    }
-    [data-gptdaddy-selection-menu] {
-      background-color: var(--gptdaddy-composer-surface, #edf8ff) !important;
-      color: var(--gptdaddy-composer-ink, #18334f) !important;
-      border-radius: 14px !important;
-      backdrop-filter: none !important;
-    }
-    [data-gptdaddy-selection-menu] :is(button, [role="menuitem"], span, svg) {
-      color: var(--gptdaddy-composer-ink, #18334f) !important;
-    }
     html[data-gptdaddy-composer-contrast] [class*="ComposerTopMenuShell"] :is(button, span, [role="option"]),
     html[data-gptdaddy-composer-contrast] [role="menu"][data-gptdaddy-permissions-menu] :is(button, span, [role="menuitem"]),
     html[data-gptdaddy-composer-contrast] #root [class*="ComposerLayoutRoot"] :is(button, span, textarea, [contenteditable="true"]) {
@@ -464,11 +309,6 @@ async function installWallpaperHost(initialConfig) {
     html[data-gptdaddy-font-color] #root aside :is(p, a, span, h1, h2, h3) {
       color: var(--gptdaddy-font-color) !important;
     }
-    html[data-gptdaddy-font-color] #root main [data-gptdaddy-file-chip],
-    html[data-gptdaddy-font-color] #root main [data-gptdaddy-file-chip] :is(span, svg),
-    html[data-gptdaddy-font-color] #root [data-gptdaddy-chat-work-switch] :is(button, button span) {
-      color: var(--gptdaddy-composer-ink, #18334f) !important;
-    }
     #root [class~="group/settings"] :is(button, input, textarea, select)[class~="bg-primary-soft-alpha"],
     #root [class~="group/settings"] :is(button, input, textarea, select)[class~="bg-primary-soft"],
     #root [class~="group/settings"] :is(button, input, textarea, select)[class~="bg-primary-soft-alpha"] :is(span, div),
@@ -485,9 +325,6 @@ async function installWallpaperHost(initialConfig) {
     html[data-gptdaddy-composer-color] body [data-gptdaddy-profile-editor] [class^="_surface_"] :is(div, span, p, button, label) {
       color: var(--gptdaddy-composer-ink) !important;
       text-shadow: none !important;
-    }
-    html[data-gptdaddy-font-color] #root [class*="resource-card-row-padding-x"] :is(span, button, svg) {
-      color: var(--gptdaddy-composer-ink, #18334f) !important;
     }
     #${HOST_ID} { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; background: #090b0f; }
     #${HOST_ID} .gptdaddy-media { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; transition: opacity 260ms ease; }
@@ -599,6 +436,7 @@ async function installWallpaperHost(initialConfig) {
     const transform = `scale(${Number(config.zoom ?? 100) / 100})`;
     for (const media of [mediaA, mediaB, imageA, imageB]) {
       if (media.tagName === 'VIDEO') media.muted = config.muted !== false;
+      media.volume = config.volume == null ? (config.muted === false ? 1 : 0) : Math.max(0, Math.min(1, Number(config.volume)));
       media.style.objectFit = config.fit || 'cover';
       media.style.objectPosition = `${Number(config.positionX ?? 50)}% ${Number(config.positionY ?? 50)}%`;
       media.style.transform = transform;
@@ -617,7 +455,6 @@ async function installWallpaperHost(initialConfig) {
   }
 
   let surfaceRgb = '';
-  let contentInk = '';
   function updateThemeSurface() {
     const rootStyle = getComputedStyle(document.documentElement);
     const colorScheme = rootStyle.colorScheme;
@@ -629,16 +466,9 @@ async function installWallpaperHost(initialConfig) {
     const darkSurface = custom ? textBrightness > 140 : (colorScheme.includes('dark') && !colorScheme.includes('light') || textBrightness > 140);
     const next = darkSurface
       ? '20 23 29' : '248 250 253';
-    const preferredInk = typeof custom === 'string' && /^#[0-9a-fA-F]{6}$/.test(custom) &&
-      contrastRatio(custom, darkSurface ? '#14171d' : '#f8fafd') >= 4.5
-      ? custom : darkSurface ? '#f7fafd' : '#18334f';
     if (next !== surfaceRgb) {
       surfaceRgb = next;
       document.documentElement.style.setProperty('--gptdaddy-surface-rgb', next);
-    }
-    if (preferredInk !== contentInk) {
-      contentInk = preferredInk;
-      document.documentElement.style.setProperty('--gptdaddy-content-ink', preferredInk);
     }
   }
 
@@ -847,19 +677,9 @@ async function installWallpaperHost(initialConfig) {
       chromeObserver.disconnect();
       clearTimeout(chromeTimer);
       restoreChromeFontColor();
-      for (const [button, handler] of chatWorkClickHandlers) button.removeEventListener('click', handler);
-      chatWorkClickHandlers.clear();
-      for (const element of document.querySelectorAll('[data-gptdaddy-chat-work-switch], [data-gptdaddy-chat-work-option], [data-gptdaddy-chat-work-active], [data-gptdaddy-file-chip]')) {
-        element.removeAttribute('data-gptdaddy-chat-work-switch');
-        element.removeAttribute('data-gptdaddy-chat-work-option');
-        element.removeAttribute('data-gptdaddy-chat-work-active');
-        element.removeAttribute('data-gptdaddy-file-chip');
-      }
       for (const menu of document.querySelectorAll('[data-gptdaddy-permissions-menu]')) menu.removeAttribute('data-gptdaddy-permissions-menu');
       for (const menu of document.querySelectorAll('[data-gptdaddy-profile-menu]')) menu.removeAttribute('data-gptdaddy-profile-menu');
       for (const shell of document.querySelectorAll('[data-gptdaddy-flat-header]')) shell.removeAttribute('data-gptdaddy-flat-header');
-      for (const button of document.querySelectorAll('[data-gptdaddy-view-changes]')) button.removeAttribute('data-gptdaddy-view-changes');
-      for (const popup of document.querySelectorAll('[data-gptdaddy-selection-menu]')) popup.removeAttribute('data-gptdaddy-selection-menu');
       for (const dialog of document.querySelectorAll('[data-gptdaddy-profile-editor]')) dialog.removeAttribute('data-gptdaddy-profile-editor');
       for (const dialog of document.querySelectorAll('[data-gptdaddy-full-access-confirm]')) dialog.removeAttribute('data-gptdaddy-full-access-confirm');
       for (const video of [mediaA, mediaB]) { video.pause(); video.removeAttribute('src'); video.load(); }
@@ -875,7 +695,6 @@ async function installWallpaperHost(initialConfig) {
       document.documentElement.style.removeProperty('--gptdaddy-composer-ink');
       document.documentElement.style.removeProperty('--gptdaddy-confirm-ink');
       document.documentElement.style.removeProperty('--gptdaddy-surface-rgb');
-      document.documentElement.style.removeProperty('--gptdaddy-content-ink');
       document.documentElement.removeAttribute('data-gptdaddy-font-color');
       document.documentElement.style.removeProperty('--gptdaddy-font-color');
       for (const [name, original] of originalTextTokens) {
@@ -892,7 +711,7 @@ async function installWallpaperHost(initialConfig) {
 }
 
 export function buildInjectionScript(config) {
-  return `(${installWallpaperHost.toString()})(${JSON.stringify(config)});${buildInappPanelScript()}`;
+  return `(${installWallpaperHost.toString()})(${JSON.stringify(config)});${buildInappPanelScript()};${buildSelectionScript()}`;
 }
 
 export const SNAPSHOT_EXPRESSION = 'window.__gptDaddyWallpaperControllerV1?.snapshot?.() ?? null';

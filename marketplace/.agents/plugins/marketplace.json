@@ -1,0 +1,10 @@
+{
+  "name": "gemini-guarder-local",
+  "interface": {"displayName": "GPT's Gemini Guarder"},
+  "plugins": [{
+    "name": "gpts-gemini-guarder",
+    "source": {"source": "local", "path": "./plugins/gpts-gemini-guarder"},
+    "policy": {"installation": "AVAILABLE", "authentication": "ON_INSTALL"},
+    "category": "Productivity"
+  }]
+}

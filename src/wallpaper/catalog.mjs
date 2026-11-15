@@ -2,6 +2,7 @@ import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { basename, dirname, extname, isAbsolute, join, relative, resolve, sep } from 'node:path';
 
 const VIDEO_EXTENSIONS = new Set(['.mp4', '.webm', '.mov', '.mkv']);
+const IMAGE_EXTENSIONS = new Set(['.gif', '.jpg', '.jpeg', '.png', '.webp', '.bmp']);
 
 export function isPathInside(parent, child) {
   const rel = relative(resolve(parent), resolve(child));
@@ -77,11 +78,17 @@ export function readProject(projectRoot, source = 'workshop', cached = null) {
   const fileExtension = filePath ? extname(filePath).toLowerCase() : '';
   let capability = 'static-preview';
   let playablePath = previewPath;
-  if (type === 'video' && filePath && VIDEO_EXTENSIONS.has(fileExtension)) {
-    capability = fileExtension === '.mp4' || fileExtension === '.webm' ? 'native-video' : 'needs-transcode';
+  let fallback = false;
+  if (type === 'video' && filePath && (fileExtension === '.mp4' || fileExtension === '.webm')) {
+    capability = 'native-video';
     playablePath = filePath;
-  } else if (previewPath && extname(previewPath).toLowerCase() === '.gif') {
-    capability = 'animated-preview';
+  } else if (previewPath && IMAGE_EXTENSIONS.has(extname(previewPath).toLowerCase())) {
+    capability = 'native-image';
+    playablePath = previewPath;
+    fallback = true;
+  } else if (type === 'video' && filePath && VIDEO_EXTENSIONS.has(fileExtension)) {
+    capability = 'needs-transcode';
+    playablePath = filePath;
   } else if (!previewPath) {
     capability = 'unsupported';
     playablePath = null;
@@ -94,6 +101,7 @@ export function readProject(projectRoot, source = 'workshop', cached = null) {
     type,
     source,
     capability,
+    fallback,
     projectRoot,
     filePath,
     previewPath,
