@@ -1,10 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1650" viewBox="0 0 1200 1650" role="img" aria-label="GPTDaddy 与 GPT Salad 汇合为 GPT's Gemini Guarder 的版本演进图">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1990" viewBox="0 0 1200 1990" role="img" aria-label="GPTDaddy 与 GPT Salad 汇合为 GPT's Gemini Guarder 的版本演进图">
 <defs>
   <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#eef6ff"/><stop offset="1" stop-color="#f9f4ff"/></linearGradient>
   <linearGradient id="guard" x2="1" y2="1"><stop stop-color="#dcecff"/><stop offset="1" stop-color="#e8ddff"/></linearGradient>
   <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#637999"/></marker>
 </defs>
-<rect width="1200" height="1650" rx="30" fill="url(#bg)"/>
+<rect width="1200" height="1990" rx="30" fill="url(#bg)"/>
 <style>
   text {font-family:Segoe UI,Microsoft YaHei,Noto Sans CJK SC,sans-serif;fill:#18324b}
   .h {font-size:30px;font-weight:750}.sub {font-size:18px;fill:#456077}
@@ -14,9 +14,23 @@
 </style>
 <text class="h" x="32" y="49">从两条独立产品线，到一个合并插件</text>
 <text class="sub" x="32" y="78">时间：台北时间 UTC+8 · 版本节点来自 Git 标签、提交与项目记录</text>
+<rect x="24" y="105" width="1152" height="176" rx="20" fill="#f3f8ff" stroke="#b9d5ef" stroke-width="2"/>
+<text class="track" x="45" y="140">前史 · WorkBuddy 对桌面环境的修复</text>
+<rect x="45" y="159" width="529" height="98" rx="14" fill="#fff" stroke="#a8c5e4"/>
+<text class="ver" x="62" y="186">2026-09-30 · Codex 无窗口危机</text>
+<text class="desc" x="62" y="212">定位 cua_node 根因</text>
+<text class="who" x="62" y="238">WorkBuddy · Hunyuan 系列*</text>
+<rect x="626" y="159" width="529" height="98" rx="14" fill="#fff" stroke="#a8c5e4"/>
+<text class="ver" x="643" y="186">2026-10-09 · 修复工具与技能</text>
+<text class="desc" x="643" y="212">制作 GUI exe；turning 技能上线</text>
+<text class="who" x="643" y="238">WorkBuddy · Hunyuan 系列*</text>
+<path d="M 579 208 H 616" fill="none" stroke="#637999" stroke-width="2" marker-end="url(#arrow)"/>
+<g transform="translate(0 205)">
 <rect x="24" y="105" width="557" height="909" rx="20" fill="#fff" stroke="#b9d5ef" stroke-width="2"/>
 <rect x="619" y="105" width="557" height="909" rx="20" fill="#fff" stroke="#d7c9f0" stroke-width="2"/>
-<text class="track" x="45" y="141">GPTDaddy · 壁纸与 Codex 界面</text>
+<rect x="45" y="117" width="36" height="36" rx="9" fill="#1b2c43"/>
+<path d="M 63 124 Q 65 133 72 135 Q 65 137 63 146 Q 61 137 54 135 Q 61 133 63 124 Z" fill="#fff"/>
+<text class="track" x="91" y="141">GPTDaddy · 壁纸与 Codex 界面</text>
 <text class="track" x="640" y="141">GPT Salad · 划词与本地生词本</text>
 
 <rect x="44" y="158" width="516" height="81" rx="14" fill="#f8fbff" stroke="#6e9dcf" stroke-width="1.5"/>
@@ -64,13 +78,13 @@
 <rect x="44" y="802" width="6" height="81" rx="3" fill="#6e9dcf"/>
 <text class="ver" x="62" y="827">0.2.7 · 11-11 13:47</text>
 <text class="desc" x="62" y="850">插件页顶栏 / 弹窗表面适配</text>
-<text class="who" x="62" y="871">Codex · OpenAI GPT 系列*</text>
+<text class="who" x="62" y="871">Codex + WorkBuddy · GPT / Hunyuan 系列*</text>
 <path d="M 302 792 V 800" fill="none" stroke="#637999" stroke-width="2" marker-end="url(#arrow)"/>
 <rect x="44" y="894" width="516" height="81" rx="14" fill="#f8fbff" stroke="#6e9dcf" stroke-width="1.5"/>
 <rect x="44" y="894" width="6" height="81" rx="3" fill="#6e9dcf"/>
 <text class="ver" x="62" y="919">0.2.8 · 11-11 14:03</text>
 <text class="desc" x="62" y="942">实机热载入 / 浮动划词工具栏识别</text>
-<text class="who" x="62" y="963">Codex · OpenAI GPT 系列*</text>
+<text class="who" x="62" y="963">Codex + WorkBuddy · GPT / Hunyuan 系列*</text>
 <path d="M 302 884 V 892" fill="none" stroke="#637999" stroke-width="2" marker-end="url(#arrow)"/>
 <rect x="640" y="699" width="515" height="90" rx="14" fill="#f8fbff" stroke="#ad86d5" stroke-width="1.5"/>
 <rect x="640" y="699" width="6" height="90" rx="3" fill="#ad86d5"/>
@@ -103,20 +117,27 @@
 <text class="who" x="212" y="1273">决策：主人；实现：Codex · OpenAI GPT 系列*</text>
 <rect x="194" y="1308" width="812" height="91" rx="14" fill="#f8fbff" stroke="#8b91d5" stroke-width="1.5"/>
 <rect x="194" y="1308" width="6" height="91" rx="3" fill="#8b91d5"/>
-<text class="ver" x="212" y="1333">合并后增强 · 11-15 白天至晚间</text>
-<text class="desc" x="212" y="1356">五语言 / 壁纸预览音量 / 图标与渲染修复</text>
-<text class="who" x="212" y="1377">Codex · GPT 系列*；WorkBuddy · Hunyuan 系列*</text>
+<text class="ver" x="212" y="1333">Daddy 能力续建 · 11-15 白天</text>
+<text class="desc" x="212" y="1356">壁纸库预览 / 音量 / Gemini dock 修复</text>
+<text class="who" x="212" y="1377">WorkBuddy · Hunyuan 系列*</text>
 <path d="M 600 1295 V 1305" fill="none" stroke="#637999" stroke-width="2" marker-end="url(#arrow)"/>
 <rect x="194" y="1412" width="812" height="91" rx="14" fill="#f8fbff" stroke="#8b91d5" stroke-width="1.5"/>
 <rect x="194" y="1412" width="6" height="91" rx="3" fill="#8b91d5"/>
-<text class="ver" x="212" y="1437">仓库发布 0.1.0 · 11-15 22:13</text>
-<text class="desc" x="212" y="1460">main 汇入两条产品线；历史分支归档</text>
-<text class="who" x="212" y="1481">WorkBuddy · Hunyuan 系列*；主人验收</text>
+<text class="ver" x="212" y="1437">合并后增强 · 11-15 白天至晚间</text>
+<text class="desc" x="212" y="1460">五语言 / Salad 品牌 / 图标与渲染修复</text>
+<text class="who" x="212" y="1481">Codex · GPT 系列*；WorkBuddy · Hunyuan 系列*</text>
 <path d="M 600 1399 V 1409" fill="none" stroke="#637999" stroke-width="2" marker-end="url(#arrow)"/>
 <rect x="194" y="1516" width="812" height="91" rx="14" fill="#f8fbff" stroke="#8b91d5" stroke-width="1.5"/>
 <rect x="194" y="1516" width="6" height="91" rx="3" fill="#8b91d5"/>
-<text class="ver" x="212" y="1541">名称定稿 · 11-15 22:24</text>
-<text class="desc" x="212" y="1564">仓库名称统一为 GPT&#x27;s Gemini Guarder</text>
-<text class="who" x="212" y="1585">WorkBuddy · Hunyuan 系列*；主人决策</text>
+<text class="ver" x="212" y="1541">仓库发布 0.1.0 · 11-15 22:13</text>
+<text class="desc" x="212" y="1564">main 汇入两条产品线；历史分支归档</text>
+<text class="who" x="212" y="1585">WorkBuddy · Hunyuan 系列*；主人验收</text>
 <path d="M 600 1503 V 1513" fill="none" stroke="#637999" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="194" y="1620" width="812" height="91" rx="14" fill="#f8fbff" stroke="#8b91d5" stroke-width="1.5"/>
+<rect x="194" y="1620" width="6" height="91" rx="3" fill="#8b91d5"/>
+<text class="ver" x="212" y="1645">名称定稿 · 11-15 22:24</text>
+<text class="desc" x="212" y="1668">仓库名称统一为 GPT&#x27;s Gemini Guarder</text>
+<text class="who" x="212" y="1689">WorkBuddy · Hunyuan 系列*；主人决策</text>
+<path d="M 600 1607 V 1617" fill="none" stroke="#637999" stroke-width="2" marker-end="url(#arrow)"/>
+</g>
 </svg>

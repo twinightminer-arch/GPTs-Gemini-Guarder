@@ -14,7 +14,7 @@
 
 <table align="center">
 <tr>
-<td align="center"><img src="docs/assets/gptdaddy-icon.png" alt="GPTDaddy 图标" width="72"><br><strong>GPTDaddy</strong><br>壁纸与界面增强</td>
+<td align="center"><img src="docs/assets/gptdaddy-icon.svg" alt="GPTDaddy 黑底白色四芒星图标" width="72"><br><strong>GPTDaddy</strong><br>壁纸与界面增强</td>
 <td align="center"><strong>＋</strong></td>
 <td align="center"><img src="docs/assets/gpt-salad-icon.png" alt="GPT Salad 图标" width="72"><br><strong>GPT Salad</strong><br>划词翻译与本地生词本</td>
 <td align="center"><strong>＝</strong></td>
@@ -22,7 +22,7 @@
 </tr>
 </table>
 
-GPTDaddy 与合并插件在归档中使用同一款四芒星图标；上方分别展示了两者各自的图标文件。
+GPTDaddy 使用原先的黑底白色四芒星图标；合并插件使用独立图标。
 
 ---
 
@@ -63,6 +63,8 @@ GPTDaddy 与合并插件在归档中使用同一款四芒星图标；上方分�
 [点击查看 1200 × 1650 像素完整流程图](docs/evolution-map.svg)
 
 图中的 **GPTDaddy 0.1.0～0.2.8** 时间来自[版本标签](https://github.com/twinightminer-arch/GPTs-Gemini-Guarder/tags)；功能来自对应提交与 `docs/` 实机审计。**GPT Salad** 的 00:43、00:48 与本地合并的 02:25 为原项目会话中的约略时间；独立路线于 11 月 15 日 22:09 归档到 `gpt-salad` 分支。**Guarder 0.2.0** 是本地市场插件清单版本，**0.1.0** 是 22:13 的仓库发布版本，两者不是同一套版本序列。
+
+WorkBuddy 的 GPTDaddy 相关贡献已按旧版流程图补回：9 月 30 日的 Codex 无窗口问题定位、10 月 9 日的修复工具与技能、11 月 11 日 0.2.7～0.2.8 阶段的共同工作，以及合并后 11 月 15 日白天的壁纸库预览、音量与 Gemini dock 修复。最后一项发生在合并之后，因此画在 Guarder 的“Daddy 能力续建”节点。
 
 > **agent 与模型说明：** 👤主人（Twinight_Miner）是产品决策者与验收人；Codex 使用 OpenAI GPT 系列模型，WorkBuddy 使用腾讯 Hunyuan 系列模型。图中的 agent 归属依据原项目说明与工作记录；Git 提交作者是仓库账号，不能单独证明执行该版本的 agent。历史记录未逐版本保留具体模型型号，图中以“系列*”标注，不臆造型号。
 
