@@ -2,7 +2,7 @@
   "name": "gpts-gemini-guard",
   "version": "0.1.0",
   "private": true,
-  "description": "GPT's Gemini Guard: a wallpaper, selection-translate and vocabulary companion for the official Codex Windows desktop app, with the real Gemini web app embedded in the floating panel.",
+  "description": "GPT's Gemini Guarder: a wallpaper, selection-translate and vocabulary companion for the official Codex Windows desktop app, with the real Gemini web app embedded in the floating panel.",
   "type": "module",
   "license": "AGPL-3.0-or-later",
   "engines": {

@@ -1,8 +1,8 @@
 <div align="center">
 
-<img src="marketplace/plugins/gpts-gemini-guarder/assets/logo.png" alt="GPT's Gemini Guard" width="140"/>
+<img src="marketplace/plugins/gpts-gemini-guarder/assets/logo.png" alt="GPT's Gemini Guarder" width="140"/>
 
-# GPT's Gemini Guard
+# GPT's Gemini Guarder
 
 **壁纸 · 划词翻译 · 生词本 · 面板内真实 Gemini——官方 Codex Windows 桌面端的全能伴侣**
 
@@ -14,21 +14,29 @@
 
 ## 一个深夜的突发奇想
 
-2026 年 11 月 14 日的深夜，一切都和往常一样：GPTDaddy 在 Codex 桌面端的后台稳定地循环着壁纸，GPT Salad——一个几个小时前才刚出生的划词翻译与生词本原型——还没来得及拥有自己的第一个正式版本。
+2026 年 11 月 14 日的深夜，一切都和往常一样：GPTDaddy 在 Codex 桌面端的后台稳定地循环着壁纸；GPT Salad——一个几个小时前才刚出生的划词翻译与生词本原型——还没来得及拥有自己的第一个正式版本。
 
 就在那个晚上，一个念头突然冒了出来：**为什么不把两个插件合二为一？**
 
-这个想法并非无中生有。Google 当年把内部的两大 AI 团队合并为一体，随后以「Gemini」命名其倾尽全力的大模型家族——合并且更名，本身就是一次向外的宣告：旧的时代结束了，新的东西诞生了。这里的情况如出一辙：GPTDaddy（壁纸与界面增强）和 GPT Salad（翻译与生词本）各自解决 Codex 桌面端的一块痛点，但用户真正想要的是一个整体。于是新项目被命名为——
+这个想法并非无中生有。Google 当年把内部的两大 AI 团队合并为一体，随后以 Gemini 命名其倾尽全力的大模型家族——合并且更名，本身就是一次向外的宣告：旧的时代结束了，新的东西诞生了。这里的情况如出一辙：GPTDaddy（壁纸与界面增强）和 GPT Salad（划词翻译与生词本）各自解决 Codex 桌面端的一块痛点，但用户真正想要的从来就是一个整体。于是新项目被命名为——
 
-> **GPT's Gemini Guard**：GPT 的「Gemini 卫士」。
+> **GPT's Gemini Guarder**
 
-名字定了，图标也就顺理成章地用上了 Gemini 的四角星。这不只是审美选择，而是三层深思熟虑：
+名字定了，图标也就顺理成章地用上了 Gemini 的四角星。可这一笔落下，主人立刻意识到一个更现实的问题：**用 Gemini 的名字、用 Gemini 的图标，是有被 Google 追究商标与版权侵权的风险的。**
 
-1. **防止侵权**：与其在 GPT 生态的命名边缘试探，不如旗帜鲜明地把自己定位为「Gemini 的插件」，身份清晰，边界清晰。
-2. **为日后用 Gemini 修改提示词铺路**：面板的 Gemini 栏内嵌的是 Chrome 打开的真实 Gemini 网页，沿用浏览器登录状态——把「改提示词」这件事随时放在手边。
-3. **应对 OpenAI 的额度危机**：OpenAI 把 Chat 模式的额度合并进了 Codex，轻量任务再全部塞给 GPT 就太奢侈了。让插件真正成为 Gemini 的插件，翻译、润色、生词整理这类小活儿就可以分流给 Gemini 去干，把宝贵的 Codex 额度留给真正重要的工作。
+风险最高的，恰恰是那种「挂着 Gemini 图标、跟 Gemini 本身却毫无关系」的擦边插件——名字像、图标像、功能却跟 Gemini 半点关系没有，那才是标准的侵权姿态。所以真正的解法不是把名字改回去，而是**让它真的成为 Gemini 的插件**：
 
-当天凌晨 02:25，合并版本落地：旧的两个插件与旧市场入口移除，`gpts-gemini-guarder` 上线。第二天白天，五语言即时切换、壁纸库左侧预览与音量滑条、Gemini 入口图标与任务栏窗口行为等一轮密集增强接连落地。当晚，**GPT's Gemini Guard 0.1.0** 正式发布——这就是你现在看到的仓库。
+- 面板的 Gemini 栏里，嵌进去的就是 Chrome 打开的**真实 Gemini 网页**，沿用浏览器登录状态；
+- 划词翻译、润色提示词、整理生词这类轻量活儿，真的由 Gemini 接手去做，而不是换个皮；
+- 于是 "Gemini" 在这个名字里是**描述性的、互操作性的**——它如实说明了自己是什么，而不是冒用什么。名字、图标、功能三者终于对得上，风险反而降到了最低。
+
+这一步，比"换个好听的名字"重要得多。名字定了、图标定、故事也就此展开：
+
+1. **防止侵权**：让插件真正成为 Gemini 的插件，Gemini 一词便从"冒用"变成"如实描述"，把 Google 追究商标侵权的风险挡在门外。
+2. **为日后用 Gemini 修改提示词铺路**：面板里随时就能打开真实 Gemini，把"改提示词"这件事放在手边，不用切窗口、不用重新登录。
+3. **应对 OpenAI 的额度危机**：OpenAI 把 Chat 模式的额度合并进了 Codex，轻量任务再全部塞给 GPT 就太奢侈了。翻译、润色、生词整理交给 Gemini，把宝贵的 Codex 额度留给真正重要的工作。
+
+当天凌晨 02:25，合并版本落地：旧的两个插件和旧市场入口移除，`gpts-gemini-guarder` 上线。第二天白天，五语言即时切换、壁纸库左侧预览与音量滑条、Gemini 入口图标与任务栏窗口行为等一轮密集增强接连落地。当晚，**GPT's Gemini Guarder 0.1.0** 正式发布——这就是你现在看到的仓库。
 
 ---
 
@@ -40,34 +48,34 @@
 flowchart LR
     subgraph PRE["前史 - 危机与自救"]
         direction LR
-        A1["2026-09-30<br/>Codex 无窗口危机<br/>cua_node 根因定位<br/>🤖 WorkBuddy · 混元"]
-        A2["2026-10-09<br/>修复工具 GUI exe<br/>技能库 turning 上线<br/>🤖 WorkBuddy · 混元"]
+        A1["2026-09-30<br/>Codex 无窗口危机<br/>cua_node 根因定位<br/>🤖 WorkBuddy · Hunyuan"]
+        A2["2026-10-09<br/>修复工具 GUI exe<br/>技能库 turning 上线<br/>🤖 WorkBuddy · Hunyuan"]
         A1 --> A2
     end
 
-    subgraph DAD["GPTDaddy 壁纸线 2026-10-12 ~ 11-15"]
+    subgraph DAD["GPTDaddy 2026-10-12 ~ 11-15"]
         direction LR
         B1["10-12 立项<br/>wallpaper-engine-codex<br/>🤖 Codex · GPT"]
         B2["10-13 ~ 10-17<br/>0.2.1 → 0.2.4<br/>打包 / 表面适配 / 恢复<br/>🤖 Codex · GPT"]
         B3["10-18 ~ 10-29<br/>0.2.5 → 0.2.6<br/>去 watchdog / 守护存活<br/>🤖 Codex · GPT"]
         B4["11-11<br/>0.2.7 → 0.2.8<br/>弹窗页 / 瞬间切换<br/>🤖 Codex + WorkBuddy"]
-        B5["11-15 白天<br/>壁纸库预览 / 音量<br/>Gemini dock 修复<br/>🤖 WorkBuddy · 混元"]
+        B5["11-15 白天<br/>壁纸库预览 / 音量<br/>Gemini dock 修复<br/>🤖 WorkBuddy · Hunyuan"]
         B1 --> B2 --> B3 --> B4 --> B5
     end
 
-    subgraph SAL["GPT Salad 生词本线 2026-11-15"]
+    subgraph SAL["GPT Salad 2026-11-15"]
         direction LR
         C1["11-15 00:43<br/>WPF 原型诞生<br/>划词翻译 + 生词本<br/>🤖 Codex · GPT"]
         C2["11-15 00:48<br/>agent 插件包<br/>gpt-salad + gpt-daddy<br/>🤖 Codex · GPT"]
-        C3["11-15 白天<br/>GPT Salad 品牌<br/>Notion / Obsidian / OneNote<br/>🤖 WorkBuddy · 混元"]
+        C3["11-15 白天<br/>GPT Salad 品牌<br/>Notion / Obsidian / OneNote<br/>🤖 WorkBuddy · Hunyuan"]
         C1 --> C2 --> C3
     end
 
-    subgraph GUARD["GPT's Gemini Guard 合并主项目"]
+    subgraph GUARD["GPT's Gemini Guarder 合并主项目"]
         direction LR
         D1["11-15 02:25<br/>合二为一 0.2.0<br/>gpts-gemini-guarder<br/>👤 小天突发奇想 + 🤖 Codex · GPT"]
-        D2["11-15 白天<br/>五语言模块 / 壁纸库升级<br/>标点事故修复 / 图标修复<br/>🤖 WorkBuddy · 混元 + 子代理协作"]
-        D3["11-15 晚<br/>0.1.0 发布<br/>本仓库上线<br/>🤖 WorkBuddy · 混元"]
+        D2["11-15 白天<br/>五语言模块 / 壁纸库升级<br/>标点事故修复 / 图标修复<br/>🤖 WorkBuddy · Hunyuan + 子代理协作"]
+        D3["11-15 晚<br/>0.1.0 发布<br/>本仓库上线<br/>🤖 WorkBuddy · Hunyuan"]
         D1 --> D2 --> D3
     end
 
@@ -77,7 +85,7 @@ flowchart LR
     D1 -. 生词本栏目延续 .-> C3
 ```
 
-> agent 与模型说明：🤖 Codex agent 运行 OpenAI GPT 系列模型（codex-cli 0.16x～0.167），承担了主项目绝大部分源码开发；🤖 WorkBuddy agent 运行腾讯混元系列模型，负责危机修复、面板增强、多语言与验收，并通过 codex-liaison / codex-watch 等子代理与 Codex 保持只读协作、互不覆盖；👤 小天（Twinight Miner）为唯一产品决策者与验收人。历史日志未逐条记录具体模型版本号，以上按平台如实标注。
+> agent 与模型说明：🤖 Codex agent 运行 OpenAI GPT 系列模型（codex-cli 0.16x～0.167），承担了主项目绝大部分源码开发；🤖 WorkBuddy agent 运行腾讯 Hunyuan 系列模型，负责危机修复、面板增强、多语言与验收，并通过 codex-liaison / codex-watch 等子代理与 Codex 保持只读协作、互不覆盖；👤 小天（Twinight Miner）为唯一产品决策者与验收人。历史日志未逐条记录具体模型版本号，以上按平台如实标注。
 
 ---
 
@@ -86,7 +94,7 @@ flowchart LR
 - **Gemini 栏**：面板内嵌 Chrome 打开的真实 Gemini 网页，沿用浏览器登录状态，不依赖收费 API；停靠、拖出、全屏状态经 Win32 精确管理，绝不生成任务栏图标
 - **壁纸引擎**：发现并导入 Wallpaper Engine 项目与本地媒体，CDP 注入 Codex 主页面，媒体缓存带来「瞬间切换」，冻结检测 + 有界恢复
 - **壁纸库**：47 项全量可用，每张卡片左侧缩略图预览（图片自动展示、视频点击应用后播放），主题页音量滑条实时生效
-- **划词翻译与生词本**：选中文本即弹「划词翻译 / 加入生词本 / 复制 / 搜索」菜单；词条存为用户自有 UTF-8 JSON，可导出 CSV/JSON，并接入 Notion / Obsidian / OneNote 三个入口
+- **GPT Salad 生词本**：选中文本即弹「划词翻译 / 加入生词本 / 复制 / 搜索」菜单；词条存为用户自有 UTF-8 JSON，可导出 CSV/JSON，并接入 Notion / Obsidian / OneNote 三个入口
 - **五语言界面**：跟随 Codex 语言或自定义（简体/繁體/English/日本語/한국어），单遍重写实测 0.7～1.5ms，零延迟零卡顿
 - **安全边界**：不修改官方程序文件、不替换官方快捷方式、不重启 Codex 进程；全部设置持久于 `%LOCALAPPDATA%\GPTDaddy`
 
@@ -94,7 +102,7 @@ flowchart LR
 
 | 分支 | 内容 |
 |---|---|
-| `main` | **GPT's Gemini Guard** 主项目（本页）：合并后完整源码、runtime 产物与 marketplace 插件包 |
+| `main` | **GPT's Gemini Guarder** 主项目（本页）：合并后完整源码、runtime 产物与 marketplace 插件包 |
 | [`gptdaddy`](../gptdaddy/) | GPTDaddy 历史路线：0.1.0～0.2.8 源码与历代安装包/便携包产物归档 |
 | [`gpt-salad`](../gpt-salad/) | GPT Salad 历史路线：WPF 桌面原型与 agent 插件包 |
 
@@ -117,4 +125,4 @@ AGPL-3.0-or-later，见 `LICENSE` 与 `THIRD_PARTY_NOTICES.md`。
 - [WorkDaddy](https://github.com/babygoton/WorkDaddy)（AGPL-3.0-or-later）
 - [dsh-plugin-wallpaper-engine-codex](https://github.com/JonathandNidhog/dsh-plugin-wallpaper-engine-codex)（MIT）
 
-本项目独立于上述仓库、OpenAI 与 Google。Gemini 名称与图标仅用于互操作与致敬性描述，相关商标归其各自所有者。
+本项目独立于上述仓库、OpenAI 与 Google，并非 Google 或 OpenAI 的官方产品。Gemini 名称与图标用于如实标识本插件与 Gemini 之间的真实互操作关系，属描述性与致敬性使用，相关商标归其各自所有者。
