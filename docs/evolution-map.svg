@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1650" viewBox="0 0 1200 1650" role="img" aria-label="GPTDaddy 与 GPT Salad 汇合为 GPT's Gemini Guarder 的版本演进图">
+<defs>
+  <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#eef6ff"/><stop offset="1" stop-color="#f9f4ff"/></linearGradient>
+  <linearGradient id="guard" x2="1" y2="1"><stop stop-color="#dcecff"/><stop offset="1" stop-color="#e8ddff"/></linearGradient>
+  <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#637999"/></marker>
+</defs>
+<rect width="1200" height="1650" rx="30" fill="url(#bg)"/>
+<style>
+  text {font-family:Segoe UI,Microsoft YaHei,Noto Sans CJK SC,sans-serif;fill:#18324b}
+  .h {font-size:30px;font-weight:750}.sub {font-size:18px;fill:#456077}
+  .track {font-size:23px;font-weight:750}.ver {font-size:20px;font-weight:750}
+  .desc {font-size:16px}.who {font-size:15px;fill:#526a83}
+  .merge {font-size:28px;font-weight:800}.foot {font-size:16px;fill:#506785}
+</style>
+<text class="h" x="32" y="49">从两条独立产品线，到一个合并插件</text>
+<text class="sub" x="32" y="78">时间：台北时间 UTC+8 · 版本节点来自 Git 标签、提交与项目记录</text>
+<rect x="24" y="105" width="557" height="909" rx="20" fill="#fff" stroke="#b9d5ef" stroke-width="2"/>
+<rect x="619" y="105" width="557" height="909" rx="20" fill="#fff" stroke="#d7c9f0" stroke-width="2"/>
+<text class="track" x="45" y="141">GPTDaddy · 壁纸与 Codex 界面</text>
+<text class="track" x="640" y="141">GPT Salad · 划词与本地生词本</text>
+
+<rect x="44" y="158" width="516" height="81" rx="14" fill="#f8fbff" stroke="#6e9dcf" stroke-width="1.5"/>
+<rect x="44" y="158" width="6" height="81" rx="3" fill="#6e9dcf"/>
+<text class="ver" x="62" y="183">0.1.0 · 10-12 23:31</text>
+<text class="desc" x="62" y="206">首个预览：CDP 壁纸与本机控制</text>
+<text class="who" x="62" y="227">Codex · OpenAI GPT 系列*</text>
+<rect x="44" y="250" width="516" height="81" rx="14" fill="#f8fbff" stroke="#6e9dcf" stroke-width="1.5"/>
+<rect x="44" y="250" width="6" height="81" rx="3" fill="#6e9dcf"/>
+<text class="ver" x="62" y="275">0.2.1 · 10-14 22:13</text>
+<text class="desc" x="62" y="298">安全安装 / 激活 / 权限弹窗可读性</text>
+<text class="who" x="62" y="319">Codex · OpenAI GPT 系列*</text>
+<path d="M 302 240 V 248" fill="none" stroke="#637999" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="44" y="342" width="516" height="81" rx="14" fill="#f8fbff" stroke="#6e9dcf" stroke-width="1.5"/>
+<rect x="44" y="342" width="6" height="81" rx="3" fill="#6e9dcf"/>
+<text class="ver" x="62" y="367">0.2.2 · 10-15 23:44</text>
+<text class="desc" x="62" y="390">输入框配色联动 / 对比度修复</text>
+<text class="who" x="62" y="411">Codex · OpenAI GPT 系列*</text>
+<path d="M 302 332 V 340" fill="none" stroke="#637999" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="44" y="434" width="516" height="81" rx="14" fill="#f8fbff" stroke="#6e9dcf" stroke-width="1.5"/>
+<rect x="44" y="434" width="6" height="81" rx="3" fill="#6e9dcf"/>
+<text class="ver" x="62" y="459">0.2.3 · 10-17 21:39</text>
+<text class="desc" x="62" y="482">去除对话底部渐变遮罩</text>
+<text class="who" x="62" y="503">Codex · OpenAI GPT 系列*</text>
+<path d="M 302 424 V 432" fill="none" stroke="#637999" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="44" y="526" width="516" height="81" rx="14" fill="#f8fbff" stroke="#6e9dcf" stroke-width="1.5"/>
+<rect x="44" y="526" width="6" height="81" rx="3" fill="#6e9dcf"/>
+<text class="ver" x="62" y="551">0.2.4 · 10-18 00:22</text>
+<text class="desc" x="62" y="574">更新后守护恢复 / 安全窗口关闭</text>
+<text class="who" x="62" y="595">Codex · OpenAI GPT 系列*</text>
+<path d="M 302 516 V 524" fill="none" stroke="#637999" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="44" y="618" width="516" height="81" rx="14" fill="#f8fbff" stroke="#6e9dcf" stroke-width="1.5"/>
+<rect x="44" y="618" width="6" height="81" rx="3" fill="#6e9dcf"/>
+<text class="ver" x="62" y="643">0.2.5 · 10-29 20:28</text>
+<text class="desc" x="62" y="666">重启保活 / 面板重建 / 模型标签配色</text>
+<text class="who" x="62" y="687">Codex · OpenAI GPT 系列*</text>
+<path d="M 302 608 V 616" fill="none" stroke="#637999" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="44" y="710" width="516" height="81" rx="14" fill="#f8fbff" stroke="#6e9dcf" stroke-width="1.5"/>
+<rect x="44" y="710" width="6" height="81" rx="3" fill="#6e9dcf"/>
+<text class="ver" x="62" y="735">0.2.6 · 11-11 13:10</text>
+<text class="desc" x="62" y="758">新版界面适配 / 电池供电启动</text>
+<text class="who" x="62" y="779">Codex · OpenAI GPT 系列*</text>
+<path d="M 302 700 V 708" fill="none" stroke="#637999" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="44" y="802" width="516" height="81" rx="14" fill="#f8fbff" stroke="#6e9dcf" stroke-width="1.5"/>
+<rect x="44" y="802" width="6" height="81" rx="3" fill="#6e9dcf"/>
+<text class="ver" x="62" y="827">0.2.7 · 11-11 13:47</text>
+<text class="desc" x="62" y="850">插件页顶栏 / 弹窗表面适配</text>
+<text class="who" x="62" y="871">Codex · OpenAI GPT 系列*</text>
+<path d="M 302 792 V 800" fill="none" stroke="#637999" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="44" y="894" width="516" height="81" rx="14" fill="#f8fbff" stroke="#6e9dcf" stroke-width="1.5"/>
+<rect x="44" y="894" width="6" height="81" rx="3" fill="#6e9dcf"/>
+<text class="ver" x="62" y="919">0.2.8 · 11-11 14:03</text>
+<text class="desc" x="62" y="942">实机热载入 / 浮动划词工具栏识别</text>
+<text class="who" x="62" y="963">Codex · OpenAI GPT 系列*</text>
+<path d="M 302 884 V 892" fill="none" stroke="#637999" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="640" y="699" width="515" height="90" rx="14" fill="#f8fbff" stroke="#ad86d5" stroke-width="1.5"/>
+<rect x="640" y="699" width="6" height="90" rx="3" fill="#ad86d5"/>
+<text class="ver" x="658" y="724">原型 · 11-15 约 00:43</text>
+<text class="desc" x="658" y="747">WPF 选词读取 / 翻译 / 本地 JSON 词库</text>
+<text class="who" x="658" y="768">Codex · OpenAI GPT 系列*</text>
+<rect x="640" y="815" width="515" height="90" rx="14" fill="#f8fbff" stroke="#ad86d5" stroke-width="1.5"/>
+<rect x="640" y="815" width="6" height="90" rx="3" fill="#ad86d5"/>
+<text class="ver" x="658" y="840">插件包 · 11-15 约 00:48</text>
+<text class="desc" x="658" y="863">gpt-salad + 同批 gpt-daddy 插件包</text>
+<text class="who" x="658" y="884">Codex · OpenAI GPT 系列*</text>
+<path d="M 897 790 V 807" fill="none" stroke="#637999" stroke-width="2" marker-end="url(#arrow)"/>
+<text class="sub" x="654" y="201">这条产品线在 11 月 15 日凌晨诞生，</text>
+<text class="sub" x="654" y="232">在合并前只有原型与初版插件包。</text>
+<text class="ver" x="654" y="275">独立能力：</text>
+<text class="desc" x="655" y="314">• 选中文字触发翻译</text>
+<text class="desc" x="655" y="350">• 用户自有的本地词条文件</text>
+<text class="desc" x="655" y="386">• 可编辑、收藏、导出词条</text>
+<text class="desc" x="655" y="422">• 外部同步失败不删除本地数据</text>
+<path d="M 302 987 V 1037 H 570 V 1063" fill="none" stroke="#637999" stroke-width="3" marker-end="url(#arrow)"/>
+<path d="M 897 907 V 1037 H 630 V 1063" fill="none" stroke="#637999" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="194" y="1071" width="812" height="95" rx="22" fill="url(#guard)" stroke="#8b91d5" stroke-width="3"/>
+<text class="merge" x="244" y="1110">GPTDaddy  +  GPT Salad  =</text>
+<text class="merge" x="244" y="1146">GPT&#x27;s Gemini Guarder</text>
+<path d="M 600 1168 V 1195" fill="none" stroke="#637999" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="194" y="1204" width="812" height="91" rx="14" fill="#f8fbff" stroke="#8b91d5" stroke-width="1.5"/>
+<rect x="194" y="1204" width="6" height="91" rx="3" fill="#8b91d5"/>
+<text class="ver" x="212" y="1229">本地插件包 0.2.0 · 11-15 约 02:25</text>
+<text class="desc" x="212" y="1252">合并壁纸、划词、词库与 Gemini 面板</text>
+<text class="who" x="212" y="1273">决策：主人；实现：Codex · OpenAI GPT 系列*</text>
+<rect x="194" y="1308" width="812" height="91" rx="14" fill="#f8fbff" stroke="#8b91d5" stroke-width="1.5"/>
+<rect x="194" y="1308" width="6" height="91" rx="3" fill="#8b91d5"/>
+<text class="ver" x="212" y="1333">合并后增强 · 11-15 白天至晚间</text>
+<text class="desc" x="212" y="1356">五语言 / 壁纸预览音量 / 图标与渲染修复</text>
+<text class="who" x="212" y="1377">Codex · GPT 系列*；WorkBuddy · Hunyuan 系列*</text>
+<path d="M 600 1295 V 1305" fill="none" stroke="#637999" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="194" y="1412" width="812" height="91" rx="14" fill="#f8fbff" stroke="#8b91d5" stroke-width="1.5"/>
+<rect x="194" y="1412" width="6" height="91" rx="3" fill="#8b91d5"/>
+<text class="ver" x="212" y="1437">仓库发布 0.1.0 · 11-15 22:13</text>
+<text class="desc" x="212" y="1460">main 汇入两条产品线；历史分支归档</text>
+<text class="who" x="212" y="1481">WorkBuddy · Hunyuan 系列*；主人验收</text>
+<path d="M 600 1399 V 1409" fill="none" stroke="#637999" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="194" y="1516" width="812" height="91" rx="14" fill="#f8fbff" stroke="#8b91d5" stroke-width="1.5"/>
+<rect x="194" y="1516" width="6" height="91" rx="3" fill="#8b91d5"/>
+<text class="ver" x="212" y="1541">名称定稿 · 11-15 22:24</text>
+<text class="desc" x="212" y="1564">仓库名称统一为 GPT&#x27;s Gemini Guarder</text>
+<text class="who" x="212" y="1585">WorkBuddy · Hunyuan 系列*；主人决策</text>
+<path d="M 600 1503 V 1513" fill="none" stroke="#637999" stroke-width="2" marker-end="url(#arrow)"/>
+</svg>

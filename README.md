@@ -10,11 +10,25 @@
 
 </div>
 
+### GPTDaddy + GPT Salad = GPT's Gemini Guarder
+
+<table align="center">
+<tr>
+<td align="center"><img src="docs/assets/gptdaddy-icon.png" alt="GPTDaddy 图标" width="72"><br><strong>GPTDaddy</strong><br>壁纸与界面增强</td>
+<td align="center"><strong>＋</strong></td>
+<td align="center"><img src="docs/assets/gpt-salad-icon.png" alt="GPT Salad 图标" width="72"><br><strong>GPT Salad</strong><br>划词翻译与本地生词本</td>
+<td align="center"><strong>＝</strong></td>
+<td align="center"><img src="marketplace/plugins/gpts-gemini-guarder/assets/icon.png" alt="GPT's Gemini Guarder 图标" width="72"><br><strong>GPT's Gemini Guarder</strong><br>合并后的插件</td>
+</tr>
+</table>
+
+GPTDaddy 与合并插件在归档中使用同一款四芒星图标；上方分别展示了两者各自的图标文件。
+
 ---
 
 ## 一个深夜的突发奇想
 
-2026 年 11 月 14 日的深夜，一切都和往常一样：GPTDaddy 在 Codex 桌面端的后台稳定地循环着壁纸；GPT Salad——一个几个小时前才刚出生的划词翻译与生词本原型——还没来得及拥有自己的第一个正式版本。
+2026 年 11 月 14 日深夜至 15 日凌晨，GPTDaddy 已能在 Codex 桌面端循环壁纸；GPT Salad 则刚以划词翻译与生词本原型出现，还没来得及拥有自己的第一个正式版本。
 
 就在那个晚上，一个念头突然冒了出来：**为什么不把两个插件合二为一？**
 
@@ -36,56 +50,21 @@
 2. **为日后用 Gemini 修改提示词铺路**：面板里随时就能打开真实 Gemini，把"改提示词"这件事放在手边，不用切窗口、不用重新登录。
 3. **应对 OpenAI 的额度危机**：OpenAI 把 Chat 模式的额度合并进了 Codex，轻量任务再全部塞给 GPT 就太奢侈了。翻译、润色、生词整理交给 Gemini，把宝贵的 Codex 额度留给真正重要的工作。
 
-当天凌晨 02:25，合并版本落地：旧的两个插件和旧市场入口移除，`gpts-gemini-guarder` 上线。第二天白天，五语言即时切换、壁纸库左侧预览与音量滑条、Gemini 入口图标与任务栏窗口行为等一轮密集增强接连落地。当晚，**GPT's Gemini Guarder 0.1.0** 正式发布——这就是你现在看到的仓库。
+11 月 15 日约 02:25，本地插件包合并为 `gpts-gemini-guarder`，其清单版本为 **0.2.0**。同一天白天至晚间，五语言即时切换、壁纸库左侧预览与音量滑条、Gemini 入口图标与窗口行为等增强陆续落地。22:13，本仓库的首个合并发布提交为 **0.1.0**；22:24，名称统一为 **GPT's Gemini Guarder**。本地插件包与仓库发布使用不同版本号。
 
 ---
 
 ## 演进流程图
 
-三条产品线的完整设计流程、更新历程、节点时间，以及每一步背后干活的 agent 和模型：
+两条独立产品线汇合为新插件的设计与版本历程，包含更新时间和可追溯的 agent／模型系列：
 
-```mermaid
-flowchart LR
-    subgraph PRE["前史 - 危机与自救"]
-        direction LR
-        A1["2026-09-30<br/>Codex 无窗口危机<br/>cua_node 根因定位<br/>🤖 WorkBuddy · Hunyuan"]
-        A2["2026-10-09<br/>修复工具 GUI exe<br/>技能库 turning 上线<br/>🤖 WorkBuddy · Hunyuan"]
-        A1 --> A2
-    end
+<a href="docs/evolution-map.svg"><img src="docs/evolution-map.svg" alt="GPTDaddy 0.1.0 至 0.2.8 与 GPT Salad 原型、插件包汇合为 GPT's Gemini Guarder 的完整演进流程图" width="1200"></a>
 
-    subgraph DAD["GPTDaddy 2026-10-12 ~ 11-15"]
-        direction LR
-        B1["10-12 立项<br/>wallpaper-engine-codex<br/>🤖 Codex · GPT"]
-        B2["10-13 ~ 10-17<br/>0.2.1 → 0.2.4<br/>打包 / 表面适配 / 恢复<br/>🤖 Codex · GPT"]
-        B3["10-18 ~ 10-29<br/>0.2.5 → 0.2.6<br/>去 watchdog / 守护存活<br/>🤖 Codex · GPT"]
-        B4["11-11<br/>0.2.7 → 0.2.8<br/>弹窗页 / 瞬间切换<br/>🤖 Codex + WorkBuddy"]
-        B5["11-15 白天<br/>壁纸库预览 / 音量<br/>Gemini dock 修复<br/>🤖 WorkBuddy · Hunyuan"]
-        B1 --> B2 --> B3 --> B4 --> B5
-    end
+[点击查看 1200 × 1650 像素完整流程图](docs/evolution-map.svg)
 
-    subgraph SAL["GPT Salad 2026-11-15"]
-        direction LR
-        C1["11-15 00:43<br/>WPF 原型诞生<br/>划词翻译 + 生词本<br/>🤖 Codex · GPT"]
-        C2["11-15 00:48<br/>agent 插件包<br/>gpt-salad + gpt-daddy<br/>🤖 Codex · GPT"]
-        C3["11-15 白天<br/>GPT Salad 品牌<br/>Notion / Obsidian / OneNote<br/>🤖 WorkBuddy · Hunyuan"]
-        C1 --> C2 --> C3
-    end
+图中的 **GPTDaddy 0.1.0～0.2.8** 时间来自[版本标签](https://github.com/twinightminer-arch/GPTs-Gemini-Guarder/tags)；功能来自对应提交与 `docs/` 实机审计。**GPT Salad** 的 00:43、00:48 与本地合并的 02:25 为原项目会话中的约略时间；独立路线于 11 月 15 日 22:09 归档到 `gpt-salad` 分支。**Guarder 0.2.0** 是本地市场插件清单版本，**0.1.0** 是 22:13 的仓库发布版本，两者不是同一套版本序列。
 
-    subgraph GUARD["GPT's Gemini Guarder 合并主项目"]
-        direction LR
-        D1["11-15 02:25<br/>合二为一 0.2.0<br/>gpts-gemini-guarder<br/>👤 小天突发奇想 + 🤖 Codex · GPT"]
-        D2["11-15 白天<br/>五语言模块 / 壁纸库升级<br/>标点事故修复 / 图标修复<br/>🤖 WorkBuddy · Hunyuan + 子代理协作"]
-        D3["11-15 晚<br/>0.1.0 发布<br/>本仓库上线<br/>🤖 WorkBuddy · Hunyuan"]
-        D1 --> D2 --> D3
-    end
-
-    A2 -. 催生 .-> B1
-    B5 --> D1
-    C2 --> D1
-    D1 -. 生词本栏目延续 .-> C3
-```
-
-> agent 与模型说明：🤖 Codex agent 运行 OpenAI GPT 系列模型（codex-cli 0.16x～0.167），承担了主项目绝大部分源码开发；🤖 WorkBuddy agent 运行腾讯 Hunyuan 系列模型，负责危机修复、面板增强、多语言与验收，并通过 codex-liaison / codex-watch 等子代理与 Codex 保持只读协作、互不覆盖；👤 小天（Twinight Miner）为唯一产品决策者与验收人。历史日志未逐条记录具体模型版本号，以上按平台如实标注。
+> **agent 与模型说明：** 👤主人（Twinight_Miner）是产品决策者与验收人；Codex 使用 OpenAI GPT 系列模型，WorkBuddy 使用腾讯 Hunyuan 系列模型。图中的 agent 归属依据原项目说明与工作记录；Git 提交作者是仓库账号，不能单独证明执行该版本的 agent。历史记录未逐版本保留具体模型型号，图中以“系列*”标注，不臆造型号。
 
 ---
 
